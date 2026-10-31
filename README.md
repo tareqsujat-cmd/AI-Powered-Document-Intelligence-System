@@ -10,7 +10,7 @@ Ingests invoices as PDF, JPG, PNG, TIFF, XLSX, XLS and CSV (PDFs up to about 100
 
 | Phase | Scope | State |
 |---|---|---|
-| 0 | Scaffold, schema, infrastructure | Done, except that the Docker stack has not been run yet |
+| 0 | Scaffold, schema, infrastructure | Done |
 | 1 | Processing pipelines | Not started |
 | 2 | LLM extraction and validation | Not started |
 | 3 | REST API, background pipeline, search | Not started |
@@ -36,7 +36,7 @@ docker compose up --build
 | Liveness | http://localhost:8000/health |
 | Readiness (Postgres, pgvector, Redis) | http://localhost:8000/health/ready |
 
-Run `make help` for shortcuts. `make test` runs the backend tests in a container against real Postgres.
+All ports bind to `127.0.0.1`, because the API has no login. Run `make help` for shortcuts. `make test` runs the backend tests in a container against real Postgres.
 
 ## Run tests without Docker
 

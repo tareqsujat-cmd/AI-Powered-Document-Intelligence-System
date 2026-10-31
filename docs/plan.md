@@ -15,7 +15,6 @@ Each phase ends with tests passing, a commit, and a stop for sign-off.
 
 | Risk | Plan |
 |---|---|
-| The development machine has no Docker or Tesseract yet | Install both before Phase 1 finishes, as OCR and the compose stack cannot be verified without them |
 | LLM free-tier quotas may throttle the evaluation run | Client backs off on rate limits; the report states the model and any throttling actually seen |
 | A 1000-page PDF may hold many invoices, and splitting them is the hardest extraction problem | Schema supports it now; Phase 2 detects boundaries, and the evaluation includes a multi-invoice PDF |
 | sentence-transformers pulls in torch, which makes images large | Use CPU-only torch in the Docker image |

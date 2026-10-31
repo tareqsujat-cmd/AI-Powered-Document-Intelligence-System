@@ -29,7 +29,7 @@ migrate: ## Apply database migrations
 	$(COMPOSE) run --rm migrate
 
 revision: ## Autogenerate a migration, e.g. make revision m="add column"
-	$(TESTS) alembic revision --autogenerate -m "$(m)"
+	$(COMPOSE) --profile test run --rm -v ./backend/migrations:/app/migrations tests alembic revision --autogenerate -m "$(m)"
 
 test: ## Run backend tests in a container, against real Postgres
 	$(TESTS) pytest tests -q

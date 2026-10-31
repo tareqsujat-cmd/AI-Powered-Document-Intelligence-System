@@ -213,5 +213,5 @@ erDiagram
 | Sync SQLAlchemy with psycopg3 for both API and workers | One set of models and sessions; the API does little work per request, and FastAPI runs sync routes in a threadpool | Lower peak connection concurrency than async, addressed by adding replicas |
 | Celery `acks_late`, prefetch 1, Redis visibility timeout above the task time limit | A crashed worker's document is redelivered. A timeout shorter than the longest OCR job would run the same document twice at once | Tasks must be idempotent (Phase 3) |
 | One-shot `migrate` service | Backend and worker replicas never race on migrations | One extra compose service |
-| Postgres and Redis ports bind to loopback only | Neither should be reachable from the network; Redis has no password in this setup | Remote deployment would need a password and TLS |
+| All published ports bind to loopback only | The API has no login and Redis has no password, so neither should be reachable from the network | Remote deployment would need authentication, a Redis password and TLS |
 | Readiness failure details go to logs only | The response must not expose hostnames or credentials | Diagnosing requires log access |
