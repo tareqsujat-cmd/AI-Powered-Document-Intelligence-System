@@ -1,0 +1,27 @@
+# Dependencies and build output are recreated inside the image
+node_modules
+.next
+out
+build
+coverage
+*.tsbuildinfo
+next-env.d.ts
+
+# Secrets
+.env*
+*.pem
+
+# Tests are not part of the production build
+**/*.test.ts
+**/*.test.tsx
+src/test
+vitest.config.mts
+
+# Repository and Docker metadata
+.git
+.gitignore
+.dockerignore
+Dockerfile
+*.md
+npm-debug.log*
+.DS_Store
