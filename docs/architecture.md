@@ -36,7 +36,7 @@ The API only validates, stores and enqueues. Everything slow runs in workers, so
 
 ## Processing pipeline
 
-These steps are **built** as libraries: file validation and text extraction ([backend/app/processing](../backend/app/processing)), LLM and rule-based extraction ([backend/app/extraction](../backend/app/extraction)), and validation ([backend/app/validation](../backend/app/validation)). Upload, background jobs and indexing are **planned** for Phase 3.
+All of these steps are **built**: file validation and text extraction ([backend/app/processing](../backend/app/processing)), LLM and rule-based extraction ([backend/app/extraction](../backend/app/extraction)), validation ([backend/app/validation](../backend/app/validation)), the background pipeline ([backend/app/pipeline](../backend/app/pipeline)), search ([backend/app/search](../backend/app/search)), and the REST API ([backend/app/api](../backend/app/api)).
 
 ```mermaid
 flowchart TD
@@ -132,7 +132,7 @@ A value also cannot be more confident than the OCR of its page.
 
 ### Validation (built)
 
-Every issue has a typed code and a severity. Any error or warning sets `needs_review`, and info alone does not. Comparisons use exact decimals, with a tolerance of 0.01.
+Every issue has a typed code and a severity. Any unresolved error or warning sets `needs_review`, and info alone does not. A reviewer can mark an issue resolved, for a false alarm or a value they have confirmed, and that holds until the problem itself changes. Comparisons use exact decimals, with a tolerance of 0.01.
 
 | Check | Severity | Notes |
 |---|---|---|
@@ -146,7 +146,8 @@ Every issue has a typed code and a severity. Any error or warning sets `needs_re
 | Negative amounts, zero total, tax above subtotal, negative or zero quantities | Warning | Credit notes are legitimate, so these are not errors |
 | Date in the future or over 10 years old, unrecognized currency | Warning | |
 | Any field below 0.6 confidence, or any extraction warning | Warning | |
-| Same supplier, number, date, and total as another invoice | Error | Across files and within one file, ignoring formatting and legal form such as Ltd or Limited |
+| Same supplier, number, date, and total as another invoice | Error | Across files and within one file, ignoring formatting and legal form such as Ltd or Limited. A PDF and a spreadsheet are the exception, below |
+| A PDF and a spreadsheet of one invoice that fully agree | Info | Reported as verified, since this is the cross-check succeeding. Needs no review |
 | PDF against PDF, or PDF against Excel: values differ for one invoice number | Error | Names both values and the other document. A value only one side knows is no conflict, and the same number from a different supplier is ignored |
 
 ### Real API results (built)
@@ -172,6 +173,60 @@ From `python -m tests.llm_smoke`, against the real Gemini API. This is a short f
 | `gemini-3.5-flash-lite` (default) | 2.8 s | None |
 
 One sample cannot show whether a larger model does better on harder documents. Phase 5 can compare them, and `LLM_MODEL` switches model with no code change.
+
+### Background pipeline and recovery (built)
+
+| Situation | What happens |
+|---|---|
+| Normal run | Stages run in order: text extraction, LLM extraction, validation, indexing. Progress and per-stage timings are stored as they go, for live status |
+| LLM rate limit or outage | The stage fails as transient, and the task retries with growing delays. Stored pages and finished invoices are kept, so **OCR is not repeated** and finished invoices cost no more LLM calls |
+| Damaged, locked or empty file, or a rejected API key | Fails straight away with a plain reason, as retrying cannot help. It can still be retried by hand |
+| Worker killed mid-job | A scheduled job notices a document with no progress for `STALLED_AFTER_SECONDS` and gives it to a new task, which resumes at the next unprocessed page |
+| Stale or repeated task | A task only acts if its id is the one recorded on the document, so a redelivered task cannot run alongside its replacement |
+| Search indexing fails | The document still completes, as its extracted data is more valuable than search. The failure is in its history, and keyword search still works |
+
+**Crash test, on the real stack.** The worker container was killed outright at page 15 of a 40-page scan, with a 60-second stall timeout for the test. Recovery started by itself, resumed at page 16, and stored all 40 pages, with one correct invoice and no extra version. Stored pages kept their original timings, and the remaining 25 pages took 24 seconds. With the default 15-minute timeout and a 5-minute check interval, recovery would start within about 20 minutes. Anyone can also reprocess a stalled document sooner through the API once the timeout has passed.
+
+### Search (built)
+
+| Mode | How it works |
+|---|---|
+| Keyword | PostgreSQL full-text search on page text, plus exact invoice numbers ignoring formatting, and supplier and customer names |
+| Semantic | Cosine similarity on all-MiniLM-L6-v2 embeddings of page chunks, using an HNSW index |
+| Hybrid (default) | Reciprocal rank fusion of both, as ranks can be compared across methods while raw scores cannot |
+
+On a small test set of invoice pages, related queries scored 0.154 or more and unrelated ones 0.123 or less, so results below 0.14 are dropped. A test keeps this honest against the real model. That is a narrow gap measured on few examples, so the cutoff may need tuning on real data.
+
+### REST API (built)
+
+Interactive documentation is at `/docs` when the stack is running. All routes are under `/api/v1`.
+
+| Route | Purpose |
+|---|---|
+| `POST /documents` | Upload files. Each gets its own outcome, so one bad file does not fail a batch |
+| `GET /documents` | List, with filters for status, review flag, file type, filename, supplier, invoice number, date range, and total range |
+| `GET /documents/{id}`, `/status` | Details, or a light status for polling |
+| `GET /documents/{id}/results` | Current invoices, with evidence for each field, line items, and validation issues |
+| `GET /documents/{id}/pages/{n}`, `/history`, `/file` | One page's text, the full audit trail, the original file |
+| `PATCH /documents/{id}/results/{result_id}` | Correct values, recording before and after, then re-validate |
+| `PATCH /documents/{id}/validation-errors/{error_id}` | Mark an issue reviewed. It stays resolved until the problem itself changes |
+| `POST /documents/{id}/reprocess` | Run again from the start, or with `resume=true` keep the work already done |
+| `POST /documents/reprocess-failed` | Resume every retryable failed document |
+| `GET /search` | Keyword, semantic, or hybrid search |
+| `GET /metrics` | Counts, processing times, success and failure rates, and validation issues |
+
+**Live check on the real stack, with the real LLM.** One upload of 13 files through the API, finished in 54 seconds including search and corrections, with two workers:
+
+| Files | Result |
+|---|---|
+| Digital PDF, scanned PDF, PNG, two-page TIFF | Completed, correct values, no review needed |
+| XLSX, CSV | Completed by rules with no LLM call, correct values |
+| Second copy of the digital PDF | Completed, flagged as a duplicate |
+| PDF and XLSX of one invoice, with different totals | The XLSX flagged with a PDF-vs-Excel mismatch. Correcting its total cleared the mismatch |
+| Damaged PDF, password-protected PDF, empty CSV | Failed, each with its own plain reason, and retryable |
+| Executable named `.pdf` | Rejected at upload, nothing stored |
+
+The first semantic search after a restart took 10.8 s, as the model loads on first use, and later ones took about 0.04 s.
 
 ## Database schema (built)
 
@@ -206,6 +261,7 @@ erDiagram
         bool is_retryable
         int attempt_count
         string task_id
+        timestamptz text_extracted_at
         timestamptz created_at
         timestamptz updated_at
         timestamptz processing_started_at
@@ -221,6 +277,8 @@ erDiagram
         float ocr_confidence
         int processing_ms
         text error
+        jsonb warnings
+        jsonb table_data
         timestamptz created_at
     }
     extracted_text {
@@ -337,3 +395,11 @@ erDiagram
 | Split invoices by rules before calling the LLM | One call per invoice rather than per page, and values are only checked against their own invoice's pages | An unlabeled invoice with no "Page 1 of N" merges with the one before it |
 | Default to a model without built-in thinking | Measured 24 times faster than the newest Flash model on the same invoice, with the same result | Harder documents may benefit from a larger model; `LLM_MODEL` changes it |
 | A failed LLM call fails the document as transient, rather than storing partial results | An outage should not look like an invoice with missing fields. Background workers can retry | One failed chunk means the whole invoice waits for the retry |
+| Each stage stores its work as it goes, and a retry skips what is stored | Repeating OCR because of one rate limit could cost many minutes on a long scan. Tested by killing a real worker | More commits, and the pipeline must be careful about what counts as done |
+| A task id on each document decides who may work on it | Redis can redeliver a task long after it was replaced, and two workers must never write one document | One query per progress update |
+| Recovery by a scheduled job, as well as Celery redelivery | With a killed worker, Redis only redelivers after its visibility timeout, which is hours | A dead worker's document waits until the stall timeout passes |
+| LLM pacing shared through Redis | A quota covers every worker, so per-process pacing would exceed it as workers are added | Falls back to per-process pacing if Redis is down |
+| Rate limits fail open | A cache outage should not take the API down | No limits during a Redis outage |
+| A PDF and a spreadsheet that agree are verified, not duplicates | The assignment asks for PDF-vs-Excel cross-checking, so flagging its success as an error would be a false alarm on every good match | A truly double-entered invoice, once as a PDF and once as a spreadsheet, will not be flagged |
+| Embedding model loads on first use | Most requests never need it, and it takes hundreds of MB and about 10 seconds | The first semantic search after a restart is slow |
+| The API has no login | The assignment does not ask for accounts, and every port binds to loopback only, so `actor` on a correction is whatever the client sends | Real deployment would need authentication |

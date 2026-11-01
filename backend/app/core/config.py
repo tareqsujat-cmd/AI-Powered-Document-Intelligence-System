@@ -32,6 +32,18 @@ class Settings(BaseSettings):
 
     storage_dir: Path = Path("/data/uploads")
     max_upload_mb: int = Field(default=200, gt=0)
+    max_request_mb: int = Field(default=1024, gt=0)
+    max_files_per_upload: int = Field(default=50, gt=0)
+
+    rate_limit_uploads_per_minute: int = Field(default=30, ge=0)
+    rate_limit_searches_per_minute: int = Field(default=120, ge=0)
+    rate_limit_requests_per_minute: int = Field(default=600, ge=0)
+
+    task_max_retries: int = Field(default=3, ge=0)
+    task_retry_delay_seconds: int = Field(default=30, ge=0)
+    # A document with no progress for this long has lost its worker. Must exceed the longest gap
+    # between progress updates: one LLM call with all of its retries.
+    stalled_after_seconds: int = Field(default=900, gt=0)
 
     task_soft_time_limit_seconds: int = Field(default=7200, gt=0)
 
@@ -48,6 +60,8 @@ class Settings(BaseSettings):
     prompts_dir: Path | None = None
 
     embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
+    embedding_batch_size: int = Field(default=32, gt=0)
+    max_embedding_chunks_per_document: int = Field(default=5000, gt=0)
 
     ocr_lang: str = "eng"
     ocr_dpi: int = Field(default=300, gt=0)

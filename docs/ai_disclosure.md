@@ -23,4 +23,11 @@ This project is built with **Claude Code** (model: Claude Opus 5.5), directed by
 - **Runtime prompts:** see [/prompts](../prompts).
 - **Found by running against the real API, after mocked tests had passed:** a batch PDF merged into one invoice because of a bug in finding invoice numbers, and the newest model took over a minute per invoice, which led to a different default. Both are fixed or changed, and the batch bug has a regression test.
 - **Verified by running:** the full test suite in Docker, with real Postgres and a mocked LLM; five synthetic documents through the real Gemini API; and the subagent's 78 deliberately broken variants of the validation code, each of which made a test fail.
-- **Not verified:** accuracy on real documents, or at volume against provider quotas, both of which Phase 5 and Phase 3 will exercise. The OpenAI-compatible client has only been tested against a simulated server, not a real provider.
+- **Not verified:** accuracy on real documents, or at volume against provider quotas. The OpenAI-compatible client has only been tested against a simulated server, not a real provider.
+
+### Phase 3: REST API, background pipeline, search
+
+- **Assistant generated:** the pipeline, crash recovery, shared LLM pacing, embeddings, search, the review endpoint, and their tests. A subagent generated the REST API, rate limiting, security middleware, and their tests; the assistant then read that code and fixed bugs the subagent reported.
+- **Changed because of running it:** a guessed similarity cutoff was replaced with a measured one, and flagging an agreeing PDF and spreadsheet as duplicates was replaced with reporting them as verified, after seeing it live.
+- **Verified by running:** the full test suite in Docker, with real Postgres, Redis, Tesseract, and the embedding model, and a mocked LLM; 13 files through the running stack with the real LLM; and killing a real worker container mid-job. The subagent tried 109 deliberately broken variants of the API code, and the assistant 31 of the extraction code. Each survivor became a new test or removed code.
+- **Not verified:** throughput with many workers, behaviour against provider quotas at volume, chunked uploads through a real server, and real-world accuracy, which Phase 5 measures.

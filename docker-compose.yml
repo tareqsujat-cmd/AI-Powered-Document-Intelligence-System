@@ -87,6 +87,9 @@ services:
       - worker
       - --loglevel=${LOG_LEVEL:-INFO}
       - --concurrency=${WORKER_CONCURRENCY:-2}
+      # Runs the periodic recovery of documents whose worker died. Safe with several replicas.
+      - --beat
+      - --schedule=/tmp/celerybeat-schedule
     depends_on:
       migrate:
         condition: service_completed_successfully

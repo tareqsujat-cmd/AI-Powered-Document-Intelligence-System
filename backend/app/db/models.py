@@ -109,6 +109,8 @@ class Document(Base):
     is_retryable: Mapped[bool] = mapped_column(Boolean, default=True)
     attempt_count: Mapped[int] = mapped_column(Integer, default=0)
     task_id: Mapped[str | None] = mapped_column(String(64))
+    # Set once every page is stored, so a retry after an LLM failure does not repeat OCR.
+    text_extracted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     created_at: Mapped[datetime] = _created_at()
     updated_at: Mapped[datetime] = mapped_column(
@@ -152,6 +154,11 @@ class DocumentPage(Base):
     ocr_confidence: Mapped[float | None] = mapped_column(Float)
     processing_ms: Mapped[int | None] = mapped_column(Integer)
     error: Mapped[str | None] = mapped_column(Text)
+    warnings: Mapped[list[str]] = mapped_column(
+        JSONB, default=list, server_default=text("'[]'::jsonb")
+    )
+    # A sheet's parsed table, for rule-based column mapping: {headers, rows, header_row, preamble}.
+    table_data: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
     created_at: Mapped[datetime] = _created_at()
 
     document: Mapped[Document] = relationship(back_populates="pages")

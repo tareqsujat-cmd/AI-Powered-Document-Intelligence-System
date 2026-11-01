@@ -18,7 +18,7 @@ from app.validation.cross_document import (
     check_against_stored,
     compare_invoices,
 )
-from app.validation.issues import ValidationCode, ValidationIssue
+from app.validation.issues import ValidationCode, ValidationIssue, needs_review
 
 OTHER_ID = uuid.uuid4()
 PDF_PAIR = (FileType.PDF, FileType.PDF)
@@ -406,6 +406,55 @@ def test_pdf_against_spreadsheet_mismatch(db: Session, stored_type: FileType) ->
     assert [(i.code, i.field, i.related_document_id) for i in issues] == [
         (ValidationCode.PDF_EXCEL_MISMATCH, "total", stored.id)
     ]
+
+
+@pytest.mark.db
+@pytest.mark.parametrize("stored_type", [FileType.XLSX, FileType.XLS, FileType.CSV])
+def test_a_spreadsheet_that_agrees_with_a_pdf_is_verified_rather_than_a_duplicate(
+    db: Session, stored_type: FileType
+) -> None:
+    stored = store(db, make_invoice(), stored_type)
+
+    issues = check(db, make_invoice())
+
+    assert [(i.code, i.severity, i.related_document_id) for i in issues] == [
+        (ValidationCode.CROSS_DOCUMENT_VERIFIED, Severity.INFO, stored.id)
+    ]
+    assert not needs_review(issues)
+    assert stored_type.value.upper() in issues[0].message
+
+
+@pytest.mark.db
+def test_verification_works_in_both_directions(db: Session) -> None:
+    store(db, make_invoice())
+
+    issues = check(db, make_invoice(), FileType.XLSX)
+
+    assert [issue.code for issue in issues] == [ValidationCode.CROSS_DOCUMENT_VERIFIED]
+
+
+@pytest.mark.db
+def test_a_pdf_and_spreadsheet_sharing_a_total_can_still_disagree_on_other_values(
+    db: Session,
+) -> None:
+    stored = store(db, make_invoice(tax=amount("11.00"), subtotal=amount("99.00")), FileType.XLSX)
+
+    issues = check(db, make_invoice())
+
+    assert {(i.code, i.field, i.related_document_id) for i in issues} == {
+        (ValidationCode.PDF_EXCEL_MISMATCH, "subtotal", stored.id),
+        (ValidationCode.PDF_EXCEL_MISMATCH, "tax", stored.id),
+    }
+    assert needs_review(issues)
+
+
+@pytest.mark.db
+def test_a_second_spreadsheet_of_the_same_invoice_is_still_a_duplicate(db: Session) -> None:
+    store(db, make_invoice(), FileType.XLSX)
+
+    issues = check(db, make_invoice(), FileType.CSV)
+
+    assert [issue.code for issue in issues] == [ValidationCode.DUPLICATE_INVOICE]
 
 
 @pytest.mark.db

@@ -72,6 +72,15 @@ def codes(issues: list[ValidationIssue]) -> list[ValidationCode]:
     return [issue.code for issue in issues]
 
 
+def test_low_confidence_reports_an_amount_the_same_before_and_after_storage() -> None:
+    def reported_as(stored_as: str) -> str | None:
+        tax = ExtractedField[Decimal](value=Decimal(stored_as), confidence=0.3)
+        issues = validate(tax=tax)
+        return with_code(issues, ValidationCode.LOW_CONFIDENCE)[0].actual_value
+
+    assert reported_as("10.00") == reported_as("10.0000") == "10.00"
+
+
 def test_clean_invoice_has_no_issues() -> None:
     issues = validate()
 

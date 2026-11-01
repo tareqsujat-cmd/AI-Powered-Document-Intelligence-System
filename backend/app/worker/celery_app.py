@@ -9,6 +9,8 @@ from app.db.session import get_engine
 
 HARD_LIMIT_GRACE_SECONDS = 120
 VISIBILITY_TIMEOUT_MARGIN_SECONDS = 600
+BROKER_CONNECT_TIMEOUT_SECONDS = 3
+RECOVERY_INTERVAL_SECONDS = 300
 
 
 def build_celery_config(settings: Settings) -> dict[str, Any]:
@@ -33,7 +35,15 @@ def build_celery_config(settings: Settings) -> dict[str, Any]:
         # Redis redelivers unacked tasks after this timeout. With acks_late it must exceed the
         # longest task (a scanned 1000-page PDF), or the same document runs twice concurrently.
         "broker_transport_options": {
-            "visibility_timeout": hard_limit + VISIBILITY_TIMEOUT_MARGIN_SECONDS
+            "visibility_timeout": hard_limit + VISIBILITY_TIMEOUT_MARGIN_SECONDS,
+            # So that an upload fails quickly, rather than hanging, if Redis is down.
+            "socket_connect_timeout": BROKER_CONNECT_TIMEOUT_SECONDS,
+        },
+        "beat_schedule": {
+            "recover-stalled-documents": {
+                "task": "documents.recover_stalled",
+                "schedule": RECOVERY_INTERVAL_SECONDS,
+            }
         },
     }
 

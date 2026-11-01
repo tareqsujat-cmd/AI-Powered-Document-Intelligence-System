@@ -71,7 +71,9 @@ def _process_frame(frame: PILImage.Image, number: int, settings: Settings) -> Pa
     return result
 
 
-def iter_image_pages(path: Path, settings: Settings) -> Iterator[PageResult]:
+def iter_image_pages(
+    path: Path, settings: Settings, *, start_page: int = 1
+) -> Iterator[PageResult]:
     """Yield one page per frame. TIFF frames are decoded one at a time."""
     try:
         image = PILImage.open(path)
@@ -79,7 +81,7 @@ def iter_image_pages(path: Path, settings: Settings) -> Iterator[PageResult]:
         raise CorruptedFileError("The image is damaged and could not be opened.") from exc
 
     with image:
-        number = 0
+        number = start_page - 1
         while True:
             try:
                 image.seek(number)

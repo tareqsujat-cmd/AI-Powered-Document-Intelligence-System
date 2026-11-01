@@ -172,14 +172,17 @@ def test_the_same_invoice_uploaded_twice_is_flagged_as_a_duplicate(
     assert needs_review(issues)
 
 
-def test_pdf_and_excel_copies_that_agree_are_duplicates_across_formats(
+def test_pdf_and_excel_copies_that_agree_are_verified_and_need_no_review(
     db: Session, tmp_path: Path, settings: Settings
 ) -> None:
-    process(db, make_pdf(tmp_path / "a.pdf"), FileType.PDF, settings)
+    pdf_saved, _ = process(db, make_pdf(tmp_path / "a.pdf"), FileType.PDF, settings)
 
     _, issues = process(db, make_xlsx(tmp_path / "a.xlsx"), FileType.XLSX, settings)
 
-    assert blocking(issues) == [ValidationCode.DUPLICATE_INVOICE]
+    assert blocking(issues) == []
+    assert not needs_review(issues)
+    verified = [issue for issue in issues if issue.code is ValidationCode.CROSS_DOCUMENT_VERIFIED]
+    assert [issue.related_document_id for issue in verified] == [pdf_saved.document_id]
 
 
 def test_pdf_and_excel_copies_that_disagree_are_flagged_with_both_values(

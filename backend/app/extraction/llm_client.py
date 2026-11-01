@@ -73,10 +73,12 @@ class _HttpLLMClient:
         *,
         transport: httpx.BaseTransport | None = None,
         sleep: Callable[[float], None] = time.sleep,
+        pacer: Callable[[], float | None] | None = None,
     ) -> None:
         self._model = settings.llm_model
         self._max_retries = settings.llm_max_retries
         self._sleep = sleep
+        self._pacer = pacer
         self._min_interval = (
             60.0 / settings.llm_requests_per_minute if settings.llm_requests_per_minute else 0.0
         )
@@ -93,6 +95,11 @@ class _HttpLLMClient:
 
     def _pace(self) -> None:
         if not self._min_interval:
+            return
+        shared_wait = self._pacer() if self._pacer is not None else None
+        if shared_wait is not None:
+            if shared_wait > 0:
+                self._sleep(shared_wait)
             return
         with self._lock:
             now = time.monotonic()
@@ -277,7 +284,7 @@ class OpenAICompatibleClient(_HttpLLMClient):
         )
 
 
-def create_llm_client(settings: Settings) -> GeminiClient | OpenAICompatibleClient:
+def create_llm_client(settings: Settings, **kwargs: Any) -> GeminiClient | OpenAICompatibleClient:
     if settings.llm_provider == "gemini":
-        return GeminiClient(settings)
-    return OpenAICompatibleClient(settings)
+        return GeminiClient(settings, **kwargs)
+    return OpenAICompatibleClient(settings, **kwargs)

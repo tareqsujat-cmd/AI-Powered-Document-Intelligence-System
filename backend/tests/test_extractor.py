@@ -596,6 +596,28 @@ class TestSkippedPages:
         assert "[Page 2]" not in llm.prompts[0]
         assert "[Page 3]" not in llm.prompts[0]
 
+    def test_an_empty_sheet_among_good_ones_costs_no_llm_call(self, settings: Settings) -> None:
+        from app.processing.results import SheetTable
+
+        pages = [
+            PageResult(
+                page_number=1,
+                text="Invoice No | Total\nA-1 | 5.00",
+                table=SheetTable(headers=["Invoice No", "Total"], rows=[["A-1", "5.00"]]),
+            ),
+            PageResult(
+                page_number=2,
+                status=PageStatus.EMPTY,
+                table=SheetTable(headers=[], rows=[]),
+            ),
+        ]
+        llm = FakeLLM(good_answer())
+
+        run = extract_invoices(pages, llm, settings)
+
+        assert llm.prompts == []
+        assert [invoice.page_start for invoice in run.invoices] == [1]
+
     def test_no_usable_pages_means_no_invoices_and_no_calls(self, settings: Settings) -> None:
         llm = FakeLLM(good_answer())
 

@@ -1,5 +1,5 @@
 import logging
-from collections.abc import Iterable, Sequence
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass, field
 from typing import Any, ClassVar
 
@@ -290,20 +290,37 @@ def _unprocessed(segment: Segment, invoice_index: int, reason: str) -> InvoiceDa
     )
 
 
+def _attach_page_notes(invoice: InvoiceData, notes: Sequence[str]) -> None:
+    for note in notes:
+        if note not in invoice.warnings:
+            invoice.warnings.append(note)
+
+
 def extract_invoices(
-    pages: Iterable[PageResult], client: LLMClient | None, settings: Settings
+    pages: Iterable[PageResult],
+    client: LLMClient | None,
+    settings: Settings,
+    *,
+    completed_indexes: frozenset[int] = frozenset(),
+    on_invoice: Callable[[InvoiceData], None] | None = None,
 ) -> ExtractionRun:
     """Find the invoices in a document's pages. Spreadsheets try exact rules before the LLM.
 
     Raises ProcessingError if the LLM cannot be reached. An invoice with no usable values is still
     returned, with nulls and reasons, so that a person can review it.
+
+    on_invoice is called with each invoice as it is finished, so the caller can store it. To resume
+    an interrupted run, completed_indexes names the invoices already stored, which are skipped
+    without an LLM call. Numbering is stable as long as the pages are the same.
     """
     run = ExtractionRun()
-    text_segments: list[Segment] = []
     plain_pages: list[PageResult] = []
     ordered: list[tuple[int, list[InvoiceData] | Segment]] = []
+    failed_pages: list[int] = []
 
     for page in pages:
+        if page.status is PageStatus.FAILED:
+            failed_pages.append(page.page_number)
         if page.status is not PageStatus.OK or not page.text:
             continue
         if page.table is None:
@@ -312,35 +329,58 @@ def extract_invoices(
         mapped = map_sheet(page)
         ordered.append((page.page_number, mapped if mapped else Segment([page])))
 
-    text_segments = split_into_invoices(plain_pages)
-    ordered.extend((segment.first_page, segment) for segment in text_segments)
+    ordered.extend((segment.first_page, segment) for segment in split_into_invoices(plain_pages))
     ordered.sort(key=lambda entry: entry[0])
 
     needs_llm = any(isinstance(item, Segment) for _, item in ordered)
     if needs_llm and client is None:
         raise LLMNotConfiguredError("LLM_API_KEY is not set, and this document needs the LLM.")
 
+    def notes_for(position: int) -> list[str]:
+        """A page that could not be read may hold part of the invoice before it."""
+        first = ordered[position][0] if position > 0 else 0
+        following = ordered[position + 1][0] if position + 1 < len(ordered) else None
+        return [
+            f"Page {number} could not be read, so this invoice may be incomplete."
+            for number in failed_pages
+            if number >= first and (following is None or number < following)
+        ]
+
+    def finish(invoice: InvoiceData) -> None:
+        run.invoices.append(invoice)
+        if on_invoice is not None:
+            on_invoice(invoice)
+
     prompt = load_prompt(PROMPT_NAME, settings.prompts_dir) if needs_llm else None
-    for _, item in ordered:
+    next_index = 0
+    for position, (_, item) in enumerate(ordered):
         if not isinstance(item, Segment):
             for invoice in item:
-                invoice.invoice_index = len(run.invoices)
-                run.invoices.append(invoice)
+                invoice.invoice_index = next_index
+                next_index += 1
+                if invoice.invoice_index not in completed_indexes:
+                    _attach_page_notes(invoice, notes_for(position))
+                    finish(invoice)
+            continue
+
+        index = next_index
+        next_index += 1
+        if index in completed_indexes:
             continue
 
         assert client is not None and prompt is not None  # noqa: S101 (checked above)
-        index = len(run.invoices)
         chunks = chunk_segment(item, settings.llm_max_chunk_chars)
         if run.llm_calls + len(chunks) > settings.llm_max_calls_per_document:
-            run.invoices.append(
-                _unprocessed(
-                    item,
-                    index,
-                    "This invoice was not extracted, because the document reached its limit of "
-                    f"{settings.llm_max_calls_per_document} LLM calls.",
-                )
+            invoice = _unprocessed(
+                item,
+                index,
+                "This invoice was not extracted, because the document reached its limit of "
+                f"{settings.llm_max_calls_per_document} LLM calls.",
             )
-            continue
-        parts = [_call_model(client, prompt, chunk, run) for chunk in chunks]
-        run.invoices.append(_merge_parts(parts, item, index, prompt, client.model))
+        else:
+            parts = [_call_model(client, prompt, chunk, run) for chunk in chunks]
+            invoice = _merge_parts(parts, item, index, prompt, client.model)
+        page_warnings = [warning for page in item.pages for warning in page.warnings]
+        _attach_page_notes(invoice, [*page_warnings, *notes_for(position)])
+        finish(invoice)
     return run

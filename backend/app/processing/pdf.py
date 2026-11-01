@@ -138,7 +138,7 @@ def _process_page(document: pymupdf.Document, index: int, settings: Settings) ->
     return result
 
 
-def iter_pdf_pages(path: Path, settings: Settings) -> Iterator[PageResult]:
+def iter_pdf_pages(path: Path, settings: Settings, *, start_page: int = 1) -> Iterator[PageResult]:
     """Yield pages one at a time, so memory use does not grow with the length of the document."""
     try:
         document = pymupdf.open(path, filetype="pdf")
@@ -150,7 +150,7 @@ def iter_pdf_pages(path: Path, settings: Settings) -> Iterator[PageResult]:
             raise EncryptedFileError("The PDF is password protected.")
         if document.page_count == 0:
             raise EmptyFileError("The PDF has no pages.")
-        for index in range(document.page_count):
+        for index in range(start_page - 1, document.page_count):
             yield _process_page(document, index, settings)
             if (index + 1) % _STORE_SHRINK_EVERY_PAGES == 0:
                 pymupdf.TOOLS.store_shrink(100)

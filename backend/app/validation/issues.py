@@ -30,6 +30,7 @@ class ValidationCode(StrEnum):
     PDF_PDF_MISMATCH = "pdf_pdf_mismatch"
     PDF_EXCEL_MISMATCH = "pdf_excel_mismatch"
     CROSS_DOCUMENT_MISMATCH = "cross_document_mismatch"
+    CROSS_DOCUMENT_VERIFIED = "cross_document_verified"
 
 
 @dataclass(frozen=True, slots=True)

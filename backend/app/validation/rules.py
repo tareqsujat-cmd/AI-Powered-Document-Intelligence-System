@@ -294,6 +294,12 @@ def _check_currency(invoice: InvoiceData) -> list[ValidationIssue]:
     ]
 
 
+def _display_value(value: object) -> str:
+    # The same amount reads as 10.00 before storage and 10.0000 after, and must not look like a
+    # different issue, which would lose a reviewer's decision about it.
+    return format_amount(value) if isinstance(value, Decimal) else str(value)
+
+
 def _check_confidence(invoice: InvoiceData) -> list[ValidationIssue]:
     issues = []
     for name in INVOICE_FIELDS:
@@ -307,7 +313,7 @@ def _check_confidence(invoice: InvoiceData) -> list[ValidationIssue]:
                 Severity.WARNING,
                 f"{_FIELD_LABELS[name]} has low confidence ({extracted.confidence:.2f}).{detail}",
                 field=name,
-                actual_value=str(extracted.value),
+                actual_value=_display_value(extracted.value),
             )
         )
     return issues

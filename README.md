@@ -13,11 +13,11 @@ Ingests invoices as PDF, JPG, PNG, TIFF, XLSX, XLS and CSV (PDFs up to about 100
 | 0 | Scaffold, schema, infrastructure | Done |
 | 1 | Processing pipelines | Done |
 | 2 | LLM extraction and validation | Done |
-| 3 | REST API, background pipeline, search | Not started |
+| 3 | REST API, background pipeline, search | Done |
 | 4 | Frontend features | Not started |
 | 5 | Evaluation and final docs | Not started |
 
-Today the system serves health endpoints and a landing page. Text extraction, invoice extraction and validation all work as libraries in `backend/app`, but cannot be used through the API or web UI until Phase 3.
+Today the whole backend works through its REST API: upload, background processing, results, corrections, review, reprocessing, search, and metrics. The web UI is still only a landing page until Phase 4, so use the API docs at `/docs` in the meantime.
 
 ## Run with Docker
 
@@ -38,7 +38,7 @@ An LLM API key is needed for PDFs, images, and spreadsheets whose columns are no
 | Liveness | http://localhost:8000/health |
 | Readiness (Postgres, pgvector, Redis) | http://localhost:8000/health/ready |
 
-All ports bind to `127.0.0.1`, because the API has no login. Run `make help` for shortcuts. `make test` runs the backend tests in a container against real Postgres.
+The backend image is about 3 GB, because it includes CPU-only PyTorch and the embedding model. All ports bind to `127.0.0.1`, because the API has no login. Run `make help` for shortcuts. `make test` runs the backend tests in a container against real Postgres.
 
 ## Run tests without Docker
 
@@ -59,7 +59,7 @@ cd frontend && npm ci && npm test
 
 | Path | Contents |
 |---|---|
-| `backend/app` | FastAPI app, configuration, database models, Celery worker, file processing, invoice extraction, validation |
+| `backend/app` | REST API, background pipeline, Celery worker, file processing, invoice extraction, validation, search, database models |
 | `backend/migrations` | Alembic migrations |
 | `backend/tests` | Backend tests |
 | `frontend` | Next.js app |

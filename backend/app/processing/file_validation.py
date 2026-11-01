@@ -26,7 +26,7 @@ _MAX_FILENAME_BYTES = 200
 MAX_ZIP_UNCOMPRESSED_BYTES = 2 * 1024 * 1024 * 1024
 MAX_ZIP_RATIO = 200
 
-_EXTENSION_TYPES = {
+EXTENSION_TYPES = {
     ".pdf": FileType.PDF,
     ".jpg": FileType.JPEG,
     ".jpeg": FileType.JPEG,
@@ -165,9 +165,9 @@ def _sha256(path: Path) -> str:
 def validate_file(path: Path, original_filename: str, settings: Settings) -> ValidatedFile:
     """Decide from file content whether a file may enter the pipeline, or raise ProcessingError."""
     safe_filename = sanitize_filename(original_filename)
-    declared = _EXTENSION_TYPES.get(PurePosixPath(safe_filename).suffix.lower())
+    declared = EXTENSION_TYPES.get(PurePosixPath(safe_filename).suffix.lower())
     if declared is None:
-        allowed = ", ".join(sorted(ext.lstrip(".").upper() for ext in _EXTENSION_TYPES))
+        allowed = ", ".join(sorted(ext.lstrip(".").upper() for ext in EXTENSION_TYPES))
         raise UnsupportedFileError(f"Unsupported file extension. Allowed types: {allowed}.")
 
     size_bytes = path.stat().st_size

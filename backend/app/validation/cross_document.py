@@ -21,13 +21,18 @@ MAX_RELATED_RESULTS = 50
 _SPREADSHEET_TYPES = frozenset({FileType.XLSX, FileType.XLS, FileType.CSV})
 
 
+def _is_pdf_and_spreadsheet(kinds: tuple[FileType, FileType]) -> bool:
+    first, second = kinds
+    return (first == FileType.PDF and second in _SPREADSHEET_TYPES) or (
+        second == FileType.PDF and first in _SPREADSHEET_TYPES
+    )
+
+
 def _mismatch_code(kinds: tuple[FileType, FileType]) -> ValidationCode:
     first, second = kinds
     if first == FileType.PDF and second == FileType.PDF:
         return ValidationCode.PDF_PDF_MISMATCH
-    if (first == FileType.PDF and second in _SPREADSHEET_TYPES) or (
-        second == FileType.PDF and first in _SPREADSHEET_TYPES
-    ):
+    if _is_pdf_and_spreadsheet(kinds):
         return ValidationCode.PDF_EXCEL_MISMATCH
     return ValidationCode.CROSS_DOCUMENT_MISMATCH
 
@@ -138,6 +143,18 @@ def _warn_if_truncated(results: list[ExtractionResult], what: str) -> None:
         logger.warning("Checked only the latest %d %s", MAX_RELATED_RESULTS, what)
 
 
+def _verified_issue(result: ExtractionResult) -> ValidationIssue:
+    return ValidationIssue(
+        ValidationCode.CROSS_DOCUMENT_VERIFIED,
+        Severity.INFO,
+        f"The {result.document.file_type.value.upper()} copy of this invoice agrees with this one "
+        f"(number {result.invoice_number}).",
+        field="invoice_number",
+        actual_value=result.invoice_number,
+        related_document_id=result.document_id,
+    )
+
+
 def _duplicate_issue(result: ExtractionResult, document_id: uuid.UUID) -> ValidationIssue:
     where = (
         "another invoice in this document"
@@ -183,9 +200,29 @@ def check_against_stored(
         ]
         if exclude_result_id is not None:
             conditions.append(ExtractionResult.id != exclude_result_id)
-        duplicates = list(session.scalars(_most_recent(*conditions)))
+        duplicates = list(
+            session.scalars(
+                _most_recent(*conditions).options(
+                    selectinload(ExtractionResult.line_items),
+                    selectinload(ExtractionResult.document),
+                )
+            )
+        )
         _warn_if_truncated(duplicates, "duplicates")
-        issues.extend(_duplicate_issue(result, document_id) for result in duplicates)
+        for result in duplicates:
+            kinds = (file_type, result.document.file_type)
+            if not _is_pdf_and_spreadsheet(kinds):
+                issues.append(_duplicate_issue(result, document_id))
+                continue
+            # A PDF and a spreadsheet of one invoice are a cross-check, not the invoice entered
+            # twice. They can still disagree on anything the duplicate key does not cover.
+            differences = compare_invoices(
+                invoice,
+                invoice_from_result(result),
+                kinds=kinds,
+                related_document_id=result.document_id,
+            )
+            issues.extend(differences or [_verified_issue(result)])
 
     if not invoice_key:
         return issues
