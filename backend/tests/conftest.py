@@ -17,6 +17,10 @@ from app.main import create_app
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 
+# The test container loads .env, so tests must never be able to see a real API key or model.
+for _name in [name for name in os.environ if name.startswith("LLM_")]:
+    del os.environ[_name]
+
 
 def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
     if shutil.which("tesseract"):

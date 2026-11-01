@@ -4,6 +4,8 @@ x-backend-common: &backend-common
   build:
     context: ./backend
     target: runtime
+    additional_contexts:
+      prompts: ./prompts
   image: docintel-backend:latest
   env_file: .env
   environment: &backend-env
@@ -119,6 +121,8 @@ services:
     build:
       context: ./backend
       target: test
+      additional_contexts:
+        prompts: ./prompts
     image: docintel-backend-test:latest
     restart: "no"
     environment:

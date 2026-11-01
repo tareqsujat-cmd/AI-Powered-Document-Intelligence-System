@@ -18,6 +18,7 @@ FROM base AS runtime
 COPY alembic.ini ./
 COPY migrations ./migrations
 COPY app ./app
+COPY --from=prompts . ./prompts
 USER app
 EXPOSE 8000
 CMD ["uvicorn", "app.main:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]
@@ -26,6 +27,7 @@ FROM base AS test
 COPY requirements-dev.txt .
 RUN pip install -r requirements-dev.txt
 COPY . .
+COPY --from=prompts . ./prompts
 RUN chown -R app:app /app
 USER app
 CMD ["pytest", "tests", "-q"]

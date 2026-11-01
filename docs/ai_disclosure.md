@@ -16,3 +16,11 @@ This project is built with **Claude Code** (model: Claude Opus 5.5), directed by
 - **Changed because of measurements:** the first OCR design made uneven lighting worse than raw Tesseract, took 56 seconds on a noisy page, and could not read sideways pages. Benchmarks exposed each of these and led to the redesign described in [architecture.md](architecture.md).
 - **Verified by running:** the full backend test suite in Docker, with real Tesseract and real Postgres; all file types through the runtime worker image as its non-root user; and 1000 scanned pages through real OCR. A deliberate memory leak confirmed that the memory test can fail.
 - **Not verified:** real-world scans. All test documents are synthetic, so real accuracy is measured in Phase 5. An encrypted XLS test uses a hand-built file, not one encrypted by Excel itself.
+
+### Phase 2: LLM extraction and validation
+
+- **Assistant generated:** the LLM client, extraction prompt, invoice splitting, hallucination guards, spreadsheet mapping, storage functions, and tests. A subagent generated the validation engine and its tests; the assistant then read that code.
+- **Runtime prompts:** see [/prompts](../prompts).
+- **Found by running against the real API, after mocked tests had passed:** a batch PDF merged into one invoice because of a bug in finding invoice numbers, and the newest model took over a minute per invoice, which led to a different default. Both are fixed or changed, and the batch bug has a regression test.
+- **Verified by running:** the full test suite in Docker, with real Postgres and a mocked LLM; five synthetic documents through the real Gemini API; and the subagent's 78 deliberately broken variants of the validation code, each of which made a test fail.
+- **Not verified:** accuracy on real documents, or at volume against provider quotas, both of which Phase 5 and Phase 3 will exercise. The OpenAI-compatible client has only been tested against a simulated server, not a real provider.

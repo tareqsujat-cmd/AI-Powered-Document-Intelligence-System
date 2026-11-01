@@ -36,7 +36,7 @@ The API only validates, stores and enqueues. Everything slow runs in workers, so
 
 ## Processing pipeline
 
-File validation and text extraction are **built** (Phase 1), as a library in [backend/app/processing](../backend/app/processing). Upload, background jobs and storage come in Phase 3, and extraction, validation and indexing in Phases 2 and 3: those steps are **planned**.
+These steps are **built** as libraries: file validation and text extraction ([backend/app/processing](../backend/app/processing)), LLM and rule-based extraction ([backend/app/extraction](../backend/app/extraction)), and validation ([backend/app/validation](../backend/app/validation)). Upload, background jobs and indexing are **planned** for Phase 3.
 
 ```mermaid
 flowchart TD
@@ -105,9 +105,77 @@ These pages are one invoice with light noise, so they are all similarly easy. Th
 
 The preprocessing was tuned against this same invoice, so the 1.00 shows that each kind of damage is handled, not how often real scans read perfectly.
 
+### Invoice extraction (built)
+
+| Behaviour | How it works |
+|---|---|
+| Finding invoices | Pages are split into invoices by rules, without the LLM, so a batch costs one call per invoice. A new invoice number or "Page 1 of N" starts a new invoice. Numbers are compared allowing for OCR confusions, so a misread repeat does not split one invoice |
+| Long invoices | Split into chunks at line boundaries, so a table row is never cut. Parts are then merged: for identifying fields the most confident value wins, and for money the last one does, as totals come at the end. Disagreeing parts produce a warning |
+| Spreadsheets | Recognizable columns are mapped by exact rules with pandas, with no LLM call. This covers one row per invoice, several rows per invoice, and one invoice with details above and totals below a table. Anything uncertain goes to the LLM |
+| Unknown values | Null, with a reason and zero confidence. Validation reports them as missing, and never treats them as zero |
+| Provider | Set by `LLM_PROVIDER`: Gemini, or anything with an OpenAI-style API, including local servers. Retries with backoff honor the provider's requested delay, and pacing stays within quotas |
+
+**Hallucination guards.** Every value from the model must be traced back to the invoice's own pages, or it becomes null with a reason. This happens in code, after the model answers, so it does not depend on the model behaving.
+
+| Value | Accepted only if |
+|---|---|
+| Invoice number | It appears ignoring punctuation. A match only after allowing for OCR confusions lowers confidence to 0.7 |
+| Company name | It appears, or is at least 85% similar on one line, which lowers confidence to 0.7 |
+| Amount | That number is printed, in any format. This catches totals the model calculated |
+| Date | It is printed. If day and month could be swapped, confidence drops to 0.6 |
+| Currency | Its code, name, or symbol is printed. `$` alone is only a hint, with confidence 0.6 |
+| Line item | Its cells pass the same checks. A cell that fails is dropped, and a row with nothing verified is removed, with a warning either way |
+
+A value also cannot be more confident than the OCR of its page.
+
+**Prompt injection.** Document text is delimited and described to the model as data, and it cannot close its own delimiter. If a model did obey an injection and report a value that is printed in the document, the guards would pass it, because that is their limit. The arithmetic checks then flag the invoice for review, and a test covers this.
+
+### Validation (built)
+
+Every issue has a typed code and a severity. Any error or warning sets `needs_review`, and info alone does not. Comparisons use exact decimals, with a tolerance of 0.01.
+
+| Check | Severity | Notes |
+|---|---|---|
+| Invoice number, date, supplier, or total missing | Error | |
+| Customer, subtotal, tax, or currency missing | Warning | |
+| Subtotal + tax ≠ total | Error | Only when all three are known |
+| Subtotal and total differ, with tax unknown | Warning | Reported as unverified, not as wrong |
+| Sum of line items ≠ subtotal | Error | Only when every line amount is known; otherwise a warning that they could not be added up |
+| Sum of line items ≠ total, with no subtotal | Warning | Only when tax is unknown or zero |
+| Quantity × unit price ≠ amount | Warning | Allows for rounding of a four-decimal unit price |
+| Negative amounts, zero total, tax above subtotal, negative or zero quantities | Warning | Credit notes are legitimate, so these are not errors |
+| Date in the future or over 10 years old, unrecognized currency | Warning | |
+| Any field below 0.6 confidence, or any extraction warning | Warning | |
+| Same supplier, number, date, and total as another invoice | Error | Across files and within one file, ignoring formatting and legal form such as Ltd or Limited |
+| PDF against PDF, or PDF against Excel: values differ for one invoice number | Error | Names both values and the other document. A value only one side knows is no conflict, and the same number from a different supplier is ignored |
+
+### Real API results (built)
+
+From `python -m tests.llm_smoke`, against the real Gemini API. This is a short functional check on five synthetic documents, not an accuracy measurement, which Phase 5 provides.
+
+| Document | Result |
+|---|---|
+| Digital PDF | All values and line items correct. Currency left null, because none is printed |
+| Scanned image, through real OCR | Same |
+| Invoice with no date, customer, totals, or currency | Those fields left null with reasons, nothing invented |
+| Document telling the model to report a total of 0.01, with a fake closing delimiter | Instruction ignored, the real total of 1,100.00 reported |
+| Two-invoice batch PDF | Split correctly into two invoices |
+
+**Model choice, from one invoice per model:** every model tested read the invoice correctly, so the default is the fastest.
+
+| Model | Time | Model thinking |
+|---|---|---|
+| `gemini-3.8-flash` | 66.3 s | On (1096 tokens) |
+| `gemini-3.8-flash`, low thinking | 31.0 s | Reduced |
+| `gemini-3.5-flash` | 9.9 s | On (2169 tokens) |
+| `gemini-3.1-flash-lite` | 4.7 s | None |
+| `gemini-3.5-flash-lite` (default) | 2.8 s | None |
+
+One sample cannot show whether a larger model does better on harder documents. Phase 5 can compare them, and `LLM_MODEL` switches model with no code change.
+
 ## Database schema (built)
 
-Migration: [0001_initial_schema.py](../backend/migrations/versions/0001_initial_schema.py). Models: [models.py](../backend/app/db/models.py). A test fails if the two drift apart.
+Migrations: [backend/migrations/versions](../backend/migrations/versions). Models: [models.py](../backend/app/db/models.py). A test fails if the two drift apart.
 
 ```mermaid
 erDiagram
@@ -172,6 +240,7 @@ erDiagram
         int page_start
         int page_end
         string invoice_number
+        string invoice_key
         date invoice_date
         string supplier_name
         string customer_name
@@ -186,6 +255,7 @@ erDiagram
         string llm_model
         string prompt_version
         jsonb raw_response
+        jsonb warnings
         timestamptz created_at
         timestamptz updated_at
     }
@@ -262,4 +332,8 @@ erDiagram
 | Readiness failure details go to logs only | The response must not expose hostnames or credentials | Diagnosing requires log access |
 | Correct scan problems before OCR, instead of retrying when confidence is low | Measured: on a page with a shadow, Tesseract read half the page at 0.80 confidence, so a confidence check alone never noticed the missing half | A small analysis cost on every OCR page |
 | Pages stream through a generator, one at a time | A 1000-page PDF must not need memory proportional to its length. Measured flat at 601 MB; a test proves that a deliberate leak fails | Callers must store each page as it arrives |
-| Excel read directly with openpyxl and xlrd, and CSV with Python's `csv` module, not pandas | These stream row by row, keep cell types, and tolerate rows above a table having fewer columns, where pandas' CSV reader raises or drops rows | Slightly more parsing code |
+| Excel read directly with openpyxl and xlrd, and CSV with Python's `csv` module; pandas is used afterwards, for column mapping | The readers stream row by row, keep cell types, and tolerate rows above a table having fewer columns, where pandas' CSV reader raises or drops rows. Pandas suits grouping and filling down the rows once they are read | Slightly more parsing code |
+| Hallucination guards in code, not only in the prompt | A prompt is a request and a guard is a check. Tests prove each invented value is discarded, whatever the model says | A legitimately calculated value that is not printed is left null for a person to fill in |
+| Split invoices by rules before calling the LLM | One call per invoice rather than per page, and values are only checked against their own invoice's pages | An unlabeled invoice with no "Page 1 of N" merges with the one before it |
+| Default to a model without built-in thinking | Measured 24 times faster than the newest Flash model on the same invoice, with the same result | Harder documents may benefit from a larger model; `LLM_MODEL` changes it |
+| A failed LLM call fails the document as transient, rather than storing partial results | An outage should not look like an invoice with missing fields. Background workers can retry | One failed chunk means the whole invoice waits for the retry |

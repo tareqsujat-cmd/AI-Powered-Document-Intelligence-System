@@ -217,6 +217,11 @@ class ExtractionResult(Base):
             "duplicate_key",
             postgresql_where=text("is_current AND duplicate_key IS NOT NULL"),
         ),
+        Index(
+            "ix_extraction_results_invoice_key",
+            "invoice_key",
+            postgresql_where=text("is_current AND invoice_key IS NOT NULL"),
+        ),
         Index("ix_extraction_results_invoice_number", "invoice_number"),
         Index("ix_extraction_results_invoice_date", "invoice_date"),
         Index("ix_extraction_results_supplier_lower", text("lower(supplier_name)")),
@@ -231,6 +236,8 @@ class ExtractionResult(Base):
     page_end: Mapped[int | None] = mapped_column(Integer)
 
     invoice_number: Mapped[str | None] = mapped_column(String(128))
+    # Letters and digits only, so cross-document checks match "INV-0042" with "inv 0042".
+    invoice_key: Mapped[str | None] = mapped_column(String(128))
     invoice_date: Mapped[date | None] = mapped_column(Date)
     supplier_name: Mapped[str | None] = mapped_column(String(512))
     customer_name: Mapped[str | None] = mapped_column(String(512))
@@ -249,6 +256,9 @@ class ExtractionResult(Base):
     llm_model: Mapped[str | None] = mapped_column(String(128))
     prompt_version: Mapped[str | None] = mapped_column(String(64))
     raw_response: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    warnings: Mapped[list[str]] = mapped_column(
+        JSONB, default=list, server_default=text("'[]'::jsonb")
+    )
 
     created_at: Mapped[datetime] = _created_at()
     updated_at: Mapped[datetime] = mapped_column(

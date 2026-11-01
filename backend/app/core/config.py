@@ -35,9 +35,17 @@ class Settings(BaseSettings):
 
     task_soft_time_limit_seconds: int = Field(default=7200, gt=0)
 
-    llm_provider: str = "gemini"
-    llm_model: str = "gemini-2.5-flash"
+    llm_provider: Literal["gemini", "openai_compatible"] = "gemini"
+    llm_model: str = "gemini-3.5-flash-lite"
     llm_api_key: SecretStr | None = None
+    llm_base_url: str | None = None
+    llm_timeout_seconds: float = Field(default=120.0, gt=0)
+    llm_max_retries: int = Field(default=5, ge=0)
+    # Pacing per worker process, to stay inside provider quotas. 0 means no pacing.
+    llm_requests_per_minute: int = Field(default=10, ge=0)
+    llm_max_chunk_chars: int = Field(default=24_000, gt=0)
+    llm_max_calls_per_document: int = Field(default=1500, gt=0)
+    prompts_dir: Path | None = None
 
     embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
 

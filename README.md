@@ -12,21 +12,23 @@ Ingests invoices as PDF, JPG, PNG, TIFF, XLSX, XLS and CSV (PDFs up to about 100
 |---|---|---|
 | 0 | Scaffold, schema, infrastructure | Done |
 | 1 | Processing pipelines | Done |
-| 2 | LLM extraction and validation | Not started |
+| 2 | LLM extraction and validation | Done |
 | 3 | REST API, background pipeline, search | Not started |
 | 4 | Frontend features | Not started |
 | 5 | Evaluation and final docs | Not started |
 
-Today the system serves health endpoints and a landing page. Text extraction works for every file type as a library in `backend/app/processing`, but it cannot be used through the API or web UI until Phase 3.
+Today the system serves health endpoints and a landing page. Text extraction, invoice extraction and validation all work as libraries in `backend/app`, but cannot be used through the API or web UI until Phase 3.
 
 ## Run with Docker
 
-Requires Docker with Compose v2.
+Requires Docker with Compose v2.17 or later.
 
 ```bash
-cp .env.example .env     # then change the values marked change-me
+cp .env.example .env     # then change the values marked change-me, and set LLM_API_KEY
 docker compose up --build
 ```
+
+An LLM API key is needed for PDFs, images, and spreadsheets whose columns are not recognized. A free Gemini key comes from [Google AI Studio](https://aistudio.google.com/apikey). If it returns "free tier not available", create the key in a new project. To use another provider, see `LLM_PROVIDER` in `.env.example`. The automated tests never call a real API; `python -m tests.llm_smoke` does, and uses your quota.
 
 | Service | URL |
 |---|---|
@@ -57,7 +59,7 @@ cd frontend && npm ci && npm test
 
 | Path | Contents |
 |---|---|
-| `backend/app` | FastAPI app, configuration, database models, Celery worker, file processing |
+| `backend/app` | FastAPI app, configuration, database models, Celery worker, file processing, invoice extraction, validation |
 | `backend/migrations` | Alembic migrations |
 | `backend/tests` | Backend tests |
 | `frontend` | Next.js app |
