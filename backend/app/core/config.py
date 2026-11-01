@@ -43,6 +43,9 @@ class Settings(BaseSettings):
 
     ocr_lang: str = "eng"
     ocr_dpi: int = Field(default=300, gt=0)
+    ocr_page_timeout_seconds: int = Field(default=120, gt=0)
+
+    max_sheet_rows: int = Field(default=100_000, gt=0)
 
     @field_validator("cors_origins", mode="before")
     @classmethod

@@ -7,7 +7,10 @@ requires-python = ">=3.11,<3.12"
 pythonpath = ["."]
 testpaths = ["tests"]
 addopts = "--strict-markers"
-markers = ["db: requires a real PostgreSQL + pgvector server (TEST_DATABASE_URL)"]
+markers = [
+    "db: requires a real PostgreSQL + pgvector server (TEST_DATABASE_URL)",
+    "ocr: requires the Tesseract binary",
+]
 
 [tool.coverage.run]
 source = ["app"]
@@ -29,10 +32,15 @@ strict = true
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["celery.*", "kombu.*", "pgvector.*"]
+module = ["celery.*", "kombu.*", "pgvector.*", "pytesseract.*", "pymupdf.*", "olefile.*", "openpyxl.*", "xlrd.*", "xlwt.*", "msoffcrypto.*", "cv2.*"]
 ignore_missing_imports = true
 
 # Celery ships no type hints, so its decorators cannot be typed.
 [[tool.mypy.overrides]]
 module = ["app.worker.*"]
 disallow_untyped_decorators = false
+
+# PyMuPDF has partial annotations, so many of its calls count as untyped.
+[[tool.mypy.overrides]]
+module = ["app.processing.pdf"]
+disallow_untyped_calls = false

@@ -34,7 +34,9 @@ flowchart LR
 
 The API only validates, stores and enqueues. Everything slow runs in workers, so scaling means adding worker replicas, and the API stays responsive while a 1000-page scan is being processed.
 
-## Processing pipeline (planned, Phases 1 to 3)
+## Processing pipeline
+
+File validation and text extraction are **built** (Phase 1), as a library in [backend/app/processing](../backend/app/processing). Upload, background jobs and storage come in Phase 3, and extraction, validation and indexing in Phases 2 and 3: those steps are **planned**.
 
 ```mermaid
 flowchart TD
@@ -59,6 +61,49 @@ flowchart TD
     pdf -.->|corrupt or encrypted| failed[status=failed with reason, retryable]
     sheet -.->|corrupt or empty| failed
 ```
+
+### Text extraction (built)
+
+| Behaviour | How it works |
+|---|---|
+| File validation | Content decides the type, from magic bytes and container structure. A wrong extension within a family (PNG named `.jpg`) is accepted; across families (an executable named `.pdf`) it is rejected. Size limits, zip bomb and image bomb checks run before any decoding |
+| When a PDF page gets OCR | No usable text layer (under 20 letters and digits), mostly unmapped font glyphs, or a scan with a small text overlay (image covers at least half the page, under 200 characters). OCR is the slowest step, so all other pages skip it |
+| Table rows | PDF text is rebuilt from word positions, so a row stays on one line and wide column gaps become tabs. OCR uses Tesseract's single-block mode for the same reason |
+| Poor scans | Upscale small images, flatten shadows, and denoise, only when the image shows the problem, then deskew. Below 0.75 confidence: orientation detection, then a local-threshold pass. The pass that reads the most characters at reasonable confidence wins |
+| Failures | One bad page is recorded as failed and the others continue. If the OCR engine itself is missing, the document stops with a transient error rather than failing page by page. A file with no readable text fails with a reason |
+| Spreadsheets | All sheets, including hidden ones, with header detection and the rows above the header kept as a preamble. Formulas with no stored result and rows beyond the limit produce a warning rather than a silent blank |
+
+### Measured results
+
+From `python -m tests.large_pdf_benchmark` and `python -m tests.ocr_benchmark`, on an Intel i5-8350U laptop (4 cores) in Docker. These are synthetic invoices, not real-world accuracy, which Phase 5 measures.
+
+**1000 fully scanned pages, real OCR, one process:** 1000 of 1000 read, no failures.
+
+| Metric | Result |
+|---|---|
+| Total time | 48.2 minutes (2.89 s per page) |
+| Time per page | Median 2.8 s, p95 3.8 s, slowest 10.9 s |
+| Peak process memory | 600 MB at page 100, 601 MB at page 1000 |
+| Expected values read | 100% on every page |
+
+These pages are one invoice with light noise, so they are all similarly easy. Throughput with several workers has not been measured yet.
+
+**OCR preprocessing, one invoice under 16 kinds of damage:** the share of 12 expected values read exactly.
+
+| Damage | Raw Tesseract (auto layout) | Raw Tesseract (single block) | This pipeline |
+|---|---|---|---|
+| Clean, blur, low contrast, 3° skew, JPEG artifacts, 40% downscale | 1.00 | 1.00 | 1.00 |
+| 7° skew | 0.75 | 0.83 | 1.00 |
+| Rotated 90° or 180° | 0.00 | 0.00 | 1.00 |
+| Gaussian noise, sigma 25 | 0.92 | 1.00 | 1.00 |
+| Gaussian noise, sigma 50 | 0.00 | 0.00 | 1.00 |
+| Salt and pepper noise, 2% | 0.92 | 0.67 | 1.00 |
+| Uneven lighting | 0.58 | 0.58 | 1.00 |
+| 25% downscale | 0.92 | 0.92 | 1.00 |
+| Simulated phone photo | 0.58 | 0.00 | 1.00 |
+| **Mean, all 16** | **0.73** | **0.69** | **1.00** |
+
+The preprocessing was tuned against this same invoice, so the 1.00 shows that each kind of damage is handled, not how often real scans read perfectly.
 
 ## Database schema (built)
 
@@ -215,3 +260,6 @@ erDiagram
 | One-shot `migrate` service | Backend and worker replicas never race on migrations | One extra compose service |
 | All published ports bind to loopback only | The API has no login and Redis has no password, so neither should be reachable from the network | Remote deployment would need authentication, a Redis password and TLS |
 | Readiness failure details go to logs only | The response must not expose hostnames or credentials | Diagnosing requires log access |
+| Correct scan problems before OCR, instead of retrying when confidence is low | Measured: on a page with a shadow, Tesseract read half the page at 0.80 confidence, so a confidence check alone never noticed the missing half | A small analysis cost on every OCR page |
+| Pages stream through a generator, one at a time | A 1000-page PDF must not need memory proportional to its length. Measured flat at 601 MB; a test proves that a deliberate leak fails | Callers must store each page as it arrives |
+| Excel read directly with openpyxl and xlrd, and CSV with Python's `csv` module, not pandas | These stream row by row, keep cell types, and tolerate rows above a table having fewer columns, where pandas' CSV reader raises or drops rows | Slightly more parsing code |

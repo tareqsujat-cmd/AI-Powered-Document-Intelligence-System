@@ -1,4 +1,5 @@
 import os
+import shutil
 import uuid
 from collections.abc import Iterator
 from pathlib import Path
@@ -15,6 +16,15 @@ from app.core.config import Settings
 from app.main import create_app
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
+
+
+def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
+    if shutil.which("tesseract"):
+        return
+    skip = pytest.mark.skip(reason="Tesseract is not installed; run the tests in Docker")
+    for item in items:
+        if item.get_closest_marker("ocr"):
+            item.add_marker(skip)
 
 
 @pytest.fixture
