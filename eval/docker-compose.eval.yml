@@ -1,0 +1,15 @@
+# Overrides for evaluation runs, used with the project name docintel-eval so that an evaluation has
+# its own empty database. Earlier documents would otherwise show up as false duplicates.
+services:
+  backend:
+    environment: &eval-env
+      LLM_MODEL: ${EVAL_LLM_MODEL:-gemini-3.5-flash-lite}
+      LLM_REQUESTS_PER_MINUTE: ${EVAL_LLM_RPM:-10}
+      # An evaluation uploads quickly and polls often. It measures processing, not the rate limits.
+      RATE_LIMIT_UPLOADS_PER_MINUTE: "0"
+      RATE_LIMIT_REQUESTS_PER_MINUTE: "0"
+      RATE_LIMIT_SEARCHES_PER_MINUTE: "0"
+  worker:
+    environment: *eval-env
+  migrate:
+    environment: *eval-env

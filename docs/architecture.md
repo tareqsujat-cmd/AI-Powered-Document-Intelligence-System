@@ -109,7 +109,7 @@ The preprocessing was tuned against this same invoice, so the 1.00 shows that ea
 
 | Behaviour | How it works |
 |---|---|
-| Finding invoices | Pages are split into invoices by rules, without the LLM, so a batch costs one call per invoice. A new invoice number or "Page 1 of N" starts a new invoice. Numbers are compared allowing for OCR confusions, so a misread repeat does not split one invoice |
+| Finding invoices | Pages are split into invoices by rules, without the LLM, so a batch costs one call per invoice. A new invoice number or "Page 1 of N" starts a new invoice. A number is found beside its label, or under an "Invoice #" column heading. Numbers are compared allowing for OCR confusions, so a misread repeat does not split one invoice |
 | Long invoices | Split into chunks at line boundaries, so a table row is never cut. Parts are then merged: for identifying fields the most confident value wins, and for money the last one does, as totals come at the end. Disagreeing parts produce a warning |
 | Spreadsheets | Recognizable columns are mapped by exact rules with pandas, with no LLM call. This covers one row per invoice, several rows per invoice, and one invoice with details above and totals below a table. Anything uncertain goes to the LLM |
 | Unknown values | Null, with a reason and zero confidence. Validation reports them as missing, and never treats them as zero |

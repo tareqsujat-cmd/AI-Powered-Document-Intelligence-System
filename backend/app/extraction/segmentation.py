@@ -11,6 +11,13 @@ _NUMBER_LABEL = re.compile(
     r"([A-Za-z0-9][A-Za-z0-9/\-_.]{2,30})",
     re.IGNORECASE,
 )
+# A column heading such as "INVOICE #" in a row of headings, with the values on the line below.
+_COLUMN_LABEL = re.compile(
+    r"\b(?:tax\s+)?(?:invoice|inv|bill)\s*(?:no\.?|num(?:ber)?\.?|nbr\.?|#|id)(?=[\s:]|$)",
+    re.IGNORECASE,
+)
+_NUMBER_SHAPE = re.compile(r"[A-Za-z0-9][A-Za-z0-9/\-_.]{2,30}")
+_DATE_SHAPE = re.compile(r"\d{1,4}[-/.]\d{1,2}[-/.]\d{1,4}")
 _PAGE_ONE = re.compile(r"\bpage\s+1\s*(?:of|/)\s*\d+\b", re.IGNORECASE)
 # Words that follow "invoice" in ordinary text and must not be taken for a number.
 _NOT_A_NUMBER = frozenset(
@@ -53,6 +60,9 @@ class Segment:
 
 def find_invoice_number(text: str) -> str | None:
     """A labeled invoice number on a page, used only to notice where one invoice ends."""
+    # Headings first: otherwise the label pattern reaches past the line end, into another column.
+    if (below := _number_below_heading(text)) is not None:
+        return below
     # Resume just after each match's start, not its end: in "INVOICE\nInvoice Number: A-1", the
     # first match takes the second "Invoice" as its value, which must not hide the real label.
     position = 0
@@ -64,6 +74,37 @@ def find_invoice_number(text: str) -> str | None:
         # A real invoice number nearly always contains a digit.
         if any(character.isdigit() for character in candidate):
             return candidate
+    return None
+
+
+def _number_below_heading(text: str) -> str | None:
+    """The value under an "INVOICE #" heading, in layouts that print headings in one row and
+    values in the next. Digital text keeps the columns as tabs; OCR text only has spaces."""
+    lines = text.split("\n")
+    for heading, values in zip(lines, lines[1:], strict=False):
+        match = _COLUMN_LABEL.search(heading)
+        # A row of headings holds no figures. A digit after the label means the value is beside
+        # it, and the line below is something else.
+        if match is None or any(c.isdigit() for c in heading[match.end() :]):
+            continue
+        if "\t" in heading and "\t" in values:
+            column = heading[: match.start()].count("\t")
+            cells = values.split("\t")
+            candidate = cells[column].strip() if column < len(cells) else ""
+            if _NUMBER_SHAPE.fullmatch(candidate) and any(c.isdigit() for c in candidate):
+                return candidate
+            continue
+        # Without columns, take the first word shaped like an identifier: a digit, a letter or
+        # separator, and not a date. A plain number is too likely to be a quantity or a year.
+        for word in values.split():
+            if (
+                _NUMBER_SHAPE.fullmatch(word)
+                and len(word) >= 4
+                and any(c.isdigit() for c in word)
+                and any(c.isalpha() or c in "-/" for c in word)
+                and not _DATE_SHAPE.fullmatch(word)
+            ):
+                return word
     return None
 
 

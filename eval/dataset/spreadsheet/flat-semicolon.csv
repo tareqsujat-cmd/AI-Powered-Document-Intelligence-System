@@ -1,0 +1,4 @@
+Invoice No;Invoice Date;Supplier;Customer;Subtotal;Tax;Total;Currency
+INV-2026-1030;2026-09-26;Fabrikam Software GmbH;Trey Research Group;1855.00;371.00;2226.00;EUR
+INV-2026-1031;2026-06-26;Tailspin Logistics Pvt Ltd;Woodgrove Bank;38250.00;3825.00;42075.00;EUR
+INV-2026-1032;2026-05-19;Coho Industrial Supplies;Alpine Ski House;1313.65;65.68;1379.33;EUR

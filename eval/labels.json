@@ -1,0 +1,2144 @@
+{
+  "seed": 20261102,
+  "documents": [
+    {
+      "file": "digital_pdf/digital-01-classic.pdf",
+      "category": "digital_pdf",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1001",
+            "invoice_date": "2026-07-14",
+            "supplier_name": "Fabrikam Software GmbH",
+            "customer_name": "Alpine Ski House",
+            "subtotal": "3646.30",
+            "tax": "182.32",
+            "total": "3828.62",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Industrial Bearing Kit",
+              "quantity": "11",
+              "unit_price": "312.50",
+              "amount": "3437.50"
+            },
+            {
+              "description": "Hydraulic Pump Seal",
+              "quantity": "11",
+              "unit_price": "18.75",
+              "amount": "206.25"
+            },
+            {
+              "description": "Stainless Steel Bolts",
+              "quantity": "3",
+              "unit_price": "0.85",
+              "amount": "2.55"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": "machinery",
+      "notes": "classic layout"
+    },
+    {
+      "file": "digital_pdf/digital-02-classic.pdf",
+      "category": "digital_pdf",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1002",
+            "invoice_date": "2026-09-26",
+            "supplier_name": "Blue Yonder Printing",
+            "customer_name": "Humongous Insurance",
+            "subtotal": "25699.90",
+            "tax": "2569.99",
+            "total": "28269.89",
+            "currency": "EUR"
+          },
+          "line_items": [
+            {
+              "description": "Annual Cloud Hosting Subscription",
+              "quantity": "10",
+              "unit_price": "1200.00",
+              "amount": "12000.00"
+            },
+            {
+              "description": "Database Support Plan",
+              "quantity": "8",
+              "unit_price": "450.00",
+              "amount": "3600.00"
+            },
+            {
+              "description": "Security Audit Service",
+              "quantity": "4",
+              "unit_price": "2300.00",
+              "amount": "9200.00"
+            },
+            {
+              "description": "User Licence Pack",
+              "quantity": "10",
+              "unit_price": "89.99",
+              "amount": "899.90"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": "software",
+      "notes": "classic layout"
+    },
+    {
+      "file": "digital_pdf/digital-03-modern.pdf",
+      "category": "digital_pdf",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1003",
+            "invoice_date": "2026-02-16",
+            "supplier_name": "Proseware Consulting LLC",
+            "customer_name": "Litware Holdings",
+            "subtotal": "1910.50",
+            "tax": "95.53",
+            "total": "2006.03",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Office Lunch Platter",
+              "quantity": "9",
+              "unit_price": "65.00",
+              "amount": "585.00"
+            },
+            {
+              "description": "Conference Coffee Service",
+              "quantity": "11",
+              "unit_price": "120.50",
+              "amount": "1325.50"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": "catering",
+      "notes": "modern layout"
+    },
+    {
+      "file": "digital_pdf/digital-04-modern.pdf",
+      "category": "digital_pdf",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1004",
+            "invoice_date": "2026-07-16",
+            "supplier_name": "Northwind Traders Ltd",
+            "customer_name": "Alpine Ski House",
+            "subtotal": "14935.00",
+            "tax": "746.75",
+            "total": "15681.75",
+            "currency": "EUR"
+          },
+          "line_items": [
+            {
+              "description": "Freight Container Transport",
+              "quantity": "8",
+              "unit_price": "1850.00",
+              "amount": "14800.00"
+            },
+            {
+              "description": "Warehouse Pallet Storage",
+              "quantity": "6",
+              "unit_price": "22.50",
+              "amount": "135.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": "logistics",
+      "notes": "modern layout"
+    },
+    {
+      "file": "digital_pdf/digital-05-compact.pdf",
+      "category": "digital_pdf",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1005",
+            "invoice_date": "2026-02-22",
+            "supplier_name": "Fabrikam Software GmbH",
+            "customer_name": "Trey Research Group",
+            "subtotal": "2073.30",
+            "tax": "414.66",
+            "total": "2487.96",
+            "currency": "CAD"
+          },
+          "line_items": [
+            {
+              "description": "Glossy Brochure Printing",
+              "quantity": "10",
+              "unit_price": "0.42",
+              "amount": "4.20"
+            },
+            {
+              "description": "Business Card Boxes",
+              "quantity": "9",
+              "unit_price": "19.90",
+              "amount": "179.10"
+            },
+            {
+              "description": "Vinyl Banner Production",
+              "quantity": "9",
+              "unit_price": "210.00",
+              "amount": "1890.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": "printing",
+      "notes": "compact layout"
+    },
+    {
+      "file": "digital_pdf/digital-06-compact.pdf",
+      "category": "digital_pdf",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1006",
+            "invoice_date": "2026-08-18",
+            "supplier_name": "Wide World Importers",
+            "customer_name": "Woodgrove Bank",
+            "subtotal": "785.20",
+            "tax": "39.26",
+            "total": "824.46",
+            "currency": "EUR"
+          },
+          "line_items": [
+            {
+              "description": "Industrial Bearing Kit",
+              "quantity": "2",
+              "unit_price": "312.50",
+              "amount": "625.00"
+            },
+            {
+              "description": "Hydraulic Pump Seal",
+              "quantity": "8",
+              "unit_price": "18.75",
+              "amount": "150.00"
+            },
+            {
+              "description": "Stainless Steel Bolts",
+              "quantity": "12",
+              "unit_price": "0.85",
+              "amount": "10.20"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": "machinery",
+      "notes": "compact layout"
+    },
+    {
+      "file": "digital_pdf/batch-4-invoices.pdf",
+      "category": "digital_pdf",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "BTC-2026-1007",
+            "invoice_date": "2026-08-26",
+            "supplier_name": "Proseware Consulting LLC",
+            "customer_name": "Graphic Design Institute",
+            "subtotal": "560.56",
+            "tax": "56.06",
+            "total": "616.62",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Glossy Brochure Printing",
+              "quantity": "3",
+              "unit_price": "0.42",
+              "amount": "1.26"
+            },
+            {
+              "description": "Business Card Boxes",
+              "quantity": "7",
+              "unit_price": "19.90",
+              "amount": "139.30"
+            },
+            {
+              "description": "Vinyl Banner Production",
+              "quantity": "2",
+              "unit_price": "210.00",
+              "amount": "420.00"
+            }
+          ]
+        },
+        {
+          "fields": {
+            "invoice_number": "BTC-2026-1008",
+            "invoice_date": "2026-03-21",
+            "supplier_name": "Wide World Importers",
+            "customer_name": "Humongous Insurance",
+            "subtotal": "1602.55",
+            "tax": "240.38",
+            "total": "1842.93",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Industrial Bearing Kit",
+              "quantity": "5",
+              "unit_price": "312.50",
+              "amount": "1562.50"
+            },
+            {
+              "description": "Hydraulic Pump Seal",
+              "quantity": "2",
+              "unit_price": "18.75",
+              "amount": "37.50"
+            },
+            {
+              "description": "Stainless Steel Bolts",
+              "quantity": "3",
+              "unit_price": "0.85",
+              "amount": "2.55"
+            }
+          ]
+        },
+        {
+          "fields": {
+            "invoice_number": "BTC-2026-1009",
+            "invoice_date": "2026-04-18",
+            "supplier_name": "Coho Industrial Supplies",
+            "customer_name": "Trey Research Group",
+            "subtotal": "460.64",
+            "tax": "46.06",
+            "total": "506.70",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Glossy Brochure Printing",
+              "quantity": "2",
+              "unit_price": "0.42",
+              "amount": "0.84"
+            },
+            {
+              "description": "Business Card Boxes",
+              "quantity": "2",
+              "unit_price": "19.90",
+              "amount": "39.80"
+            },
+            {
+              "description": "Vinyl Banner Production",
+              "quantity": "2",
+              "unit_price": "210.00",
+              "amount": "420.00"
+            }
+          ]
+        },
+        {
+          "fields": {
+            "invoice_number": "BTC-2026-1010",
+            "invoice_date": "2026-01-24",
+            "supplier_name": "Proseware Consulting LLC",
+            "customer_name": "Woodgrove Bank",
+            "subtotal": "18000.00",
+            "tax": "3600.00",
+            "total": "21600.00",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Annual Cloud Hosting Subscription",
+              "quantity": "12",
+              "unit_price": "1200.00",
+              "amount": "14400.00"
+            },
+            {
+              "description": "Database Support Plan",
+              "quantity": "8",
+              "unit_price": "450.00",
+              "amount": "3600.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 4,
+      "subject": null,
+      "notes": "four invoices in one file"
+    },
+    {
+      "file": "digital_pdf/multi-page-invoice.pdf",
+      "category": "digital_pdf",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "LNG-2026-1011",
+            "invoice_date": "2026-08-26",
+            "supplier_name": "Adventure Foods Inc",
+            "customer_name": "Woodgrove Bank",
+            "subtotal": "21290.45",
+            "tax": "3193.57",
+            "total": "24484.02",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Industrial Bearing Kit",
+              "quantity": "5",
+              "unit_price": "312.50",
+              "amount": "1562.50"
+            },
+            {
+              "description": "Hydraulic Pump Seal",
+              "quantity": "9",
+              "unit_price": "18.75",
+              "amount": "168.75"
+            },
+            {
+              "description": "Stainless Steel Bolts",
+              "quantity": "12",
+              "unit_price": "0.85",
+              "amount": "10.20"
+            },
+            {
+              "description": "Conveyor Belt Section",
+              "quantity": "7",
+              "unit_price": "145.00",
+              "amount": "1015.00"
+            },
+            {
+              "description": "Freight Container Transport",
+              "quantity": "9",
+              "unit_price": "1850.00",
+              "amount": "16650.00"
+            },
+            {
+              "description": "Warehouse Pallet Storage",
+              "quantity": "8",
+              "unit_price": "22.50",
+              "amount": "180.00"
+            },
+            {
+              "description": "Express Courier Delivery",
+              "quantity": "8",
+              "unit_price": "38.00",
+              "amount": "304.00"
+            },
+            {
+              "description": "Customs Clearance Fee",
+              "quantity": "8",
+              "unit_price": "175.00",
+              "amount": "1400.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 2,
+      "subject": null,
+      "notes": "one invoice on two pages"
+    },
+    {
+      "file": "scanned_pdf/scan-01.pdf",
+      "category": "scanned_pdf",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1013",
+            "invoice_date": "2026-06-25",
+            "supplier_name": "Fabrikam Software GmbH",
+            "customer_name": "Litware Holdings",
+            "subtotal": "1052.70",
+            "tax": "157.91",
+            "total": "1210.61",
+            "currency": "EUR"
+          },
+          "line_items": [
+            {
+              "description": "Industrial Bearing Kit",
+              "quantity": "1",
+              "unit_price": "312.50",
+              "amount": "312.50"
+            },
+            {
+              "description": "Hydraulic Pump Seal",
+              "quantity": "8",
+              "unit_price": "18.75",
+              "amount": "150.00"
+            },
+            {
+              "description": "Stainless Steel Bolts",
+              "quantity": "12",
+              "unit_price": "0.85",
+              "amount": "10.20"
+            },
+            {
+              "description": "Conveyor Belt Section",
+              "quantity": "4",
+              "unit_price": "145.00",
+              "amount": "580.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": ""
+    },
+    {
+      "file": "scanned_pdf/scan-02.pdf",
+      "category": "scanned_pdf",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1014",
+            "invoice_date": "2026-06-24",
+            "supplier_name": "Blue Yonder Printing",
+            "customer_name": "Humongous Insurance",
+            "subtotal": "3750.00",
+            "tax": "187.50",
+            "total": "3937.50",
+            "currency": "EUR"
+          },
+          "line_items": [
+            {
+              "description": "Annual Cloud Hosting Subscription",
+              "quantity": "2",
+              "unit_price": "1200.00",
+              "amount": "2400.00"
+            },
+            {
+              "description": "Database Support Plan",
+              "quantity": "3",
+              "unit_price": "450.00",
+              "amount": "1350.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": ""
+    },
+    {
+      "file": "scanned_pdf/scan-03.pdf",
+      "category": "scanned_pdf",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1015",
+            "invoice_date": "2026-02-26",
+            "supplier_name": "Wide World Importers",
+            "customer_name": "Graphic Design Institute",
+            "subtotal": "9138.00",
+            "tax": "1827.60",
+            "total": "10965.60",
+            "currency": "EUR"
+          },
+          "line_items": [
+            {
+              "description": "Freight Container Transport",
+              "quantity": "4",
+              "unit_price": "1850.00",
+              "amount": "7400.00"
+            },
+            {
+              "description": "Warehouse Pallet Storage",
+              "quantity": "12",
+              "unit_price": "22.50",
+              "amount": "270.00"
+            },
+            {
+              "description": "Express Courier Delivery",
+              "quantity": "11",
+              "unit_price": "38.00",
+              "amount": "418.00"
+            },
+            {
+              "description": "Customs Clearance Fee",
+              "quantity": "6",
+              "unit_price": "175.00",
+              "amount": "1050.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": ""
+    },
+    {
+      "file": "scanned_pdf/scan-04.pdf",
+      "category": "scanned_pdf",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1016",
+            "invoice_date": "2026-05-22",
+            "supplier_name": "Tailspin Logistics Pvt Ltd",
+            "customer_name": "Litware Holdings",
+            "subtotal": "38699.95",
+            "tax": "5804.99",
+            "total": "44504.94",
+            "currency": "GBP"
+          },
+          "line_items": [
+            {
+              "description": "Annual Cloud Hosting Subscription",
+              "quantity": "12",
+              "unit_price": "1200.00",
+              "amount": "14400.00"
+            },
+            {
+              "description": "Database Support Plan",
+              "quantity": "7",
+              "unit_price": "450.00",
+              "amount": "3150.00"
+            },
+            {
+              "description": "Security Audit Service",
+              "quantity": "9",
+              "unit_price": "2300.00",
+              "amount": "20700.00"
+            },
+            {
+              "description": "User Licence Pack",
+              "quantity": "5",
+              "unit_price": "89.99",
+              "amount": "449.95"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": ""
+    },
+    {
+      "file": "scanned_pdf/scan-05.pdf",
+      "category": "scanned_pdf",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1017",
+            "invoice_date": "2026-02-27",
+            "supplier_name": "Adventure Foods Inc",
+            "customer_name": "Trey Research Group",
+            "subtotal": "2105.50",
+            "tax": "210.55",
+            "total": "2316.05",
+            "currency": "EUR"
+          },
+          "line_items": [
+            {
+              "description": "Office Lunch Platter",
+              "quantity": "12",
+              "unit_price": "65.00",
+              "amount": "780.00"
+            },
+            {
+              "description": "Conference Coffee Service",
+              "quantity": "11",
+              "unit_price": "120.50",
+              "amount": "1325.50"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": ""
+    },
+    {
+      "file": "image/photo-01.png",
+      "category": "image",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1018",
+            "invoice_date": "2026-06-23",
+            "supplier_name": "Northwind Traders Ltd",
+            "customer_name": "Humongous Insurance",
+            "subtotal": "21573.00",
+            "tax": "4314.60",
+            "total": "25887.60",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Freight Container Transport",
+              "quantity": "11",
+              "unit_price": "1850.00",
+              "amount": "20350.00"
+            },
+            {
+              "description": "Warehouse Pallet Storage",
+              "quantity": "6",
+              "unit_price": "22.50",
+              "amount": "135.00"
+            },
+            {
+              "description": "Express Courier Delivery",
+              "quantity": "1",
+              "unit_price": "38.00",
+              "amount": "38.00"
+            },
+            {
+              "description": "Customs Clearance Fee",
+              "quantity": "6",
+              "unit_price": "175.00",
+              "amount": "1050.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": ""
+    },
+    {
+      "file": "image/photo-02.jpg",
+      "category": "image",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1019",
+            "invoice_date": "2026-03-18",
+            "supplier_name": "Blue Yonder Printing",
+            "customer_name": "Trey Research Group",
+            "subtotal": "481.25",
+            "tax": "72.19",
+            "total": "553.44",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Industrial Bearing Kit",
+              "quantity": "1",
+              "unit_price": "312.50",
+              "amount": "312.50"
+            },
+            {
+              "description": "Hydraulic Pump Seal",
+              "quantity": "9",
+              "unit_price": "18.75",
+              "amount": "168.75"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": ""
+    },
+    {
+      "file": "image/photo-03.jpg",
+      "category": "image",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1020",
+            "invoice_date": "2026-08-19",
+            "supplier_name": "Proseware Consulting LLC",
+            "customer_name": "City Power and Light",
+            "subtotal": "1096.75",
+            "tax": "219.35",
+            "total": "1316.10",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Office Lunch Platter",
+              "quantity": "8",
+              "unit_price": "65.00",
+              "amount": "520.00"
+            },
+            {
+              "description": "Conference Coffee Service",
+              "quantity": "3",
+              "unit_price": "120.50",
+              "amount": "361.50"
+            },
+            {
+              "description": "Fresh Fruit Basket",
+              "quantity": "6",
+              "unit_price": "24.00",
+              "amount": "144.00"
+            },
+            {
+              "description": "Bottled Water Crate",
+              "quantity": "5",
+              "unit_price": "14.25",
+              "amount": "71.25"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": ""
+    },
+    {
+      "file": "image/photo-04.tiff",
+      "category": "image",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1021",
+            "invoice_date": "2026-05-19",
+            "supplier_name": "Blue Yonder Printing",
+            "customer_name": "City Power and Light",
+            "subtotal": "4236.00",
+            "tax": "211.80",
+            "total": "4447.80",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Freight Container Transport",
+              "quantity": "2",
+              "unit_price": "1850.00",
+              "amount": "3700.00"
+            },
+            {
+              "description": "Warehouse Pallet Storage",
+              "quantity": "12",
+              "unit_price": "22.50",
+              "amount": "270.00"
+            },
+            {
+              "description": "Express Courier Delivery",
+              "quantity": "7",
+              "unit_price": "38.00",
+              "amount": "266.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": ""
+    },
+    {
+      "file": "image/multi-page.tiff",
+      "category": "image",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1022",
+            "invoice_date": "2026-06-17",
+            "supplier_name": "Fabrikam Software GmbH",
+            "customer_name": "Contoso Retail Inc",
+            "subtotal": "704.39",
+            "tax": "140.88",
+            "total": "845.27",
+            "currency": "EUR"
+          },
+          "line_items": [
+            {
+              "description": "Glossy Brochure Printing",
+              "quantity": "7",
+              "unit_price": "0.42",
+              "amount": "2.94"
+            },
+            {
+              "description": "Business Card Boxes",
+              "quantity": "3",
+              "unit_price": "19.90",
+              "amount": "59.70"
+            },
+            {
+              "description": "Vinyl Banner Production",
+              "quantity": "3",
+              "unit_price": "210.00",
+              "amount": "630.00"
+            },
+            {
+              "description": "Letterhead Paper Reams",
+              "quantity": "1",
+              "unit_price": "11.75",
+              "amount": "11.75"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 2,
+      "subject": null,
+      "notes": ""
+    },
+    {
+      "file": "low_quality/heavy-noise.png",
+      "category": "low_quality",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1023",
+            "invoice_date": "2026-06-22",
+            "supplier_name": "Wide World Importers",
+            "customer_name": "Alpine Ski House",
+            "subtotal": "1757.50",
+            "tax": "175.75",
+            "total": "1933.25",
+            "currency": "EUR"
+          },
+          "line_items": [
+            {
+              "description": "Office Lunch Platter",
+              "quantity": "7",
+              "unit_price": "65.00",
+              "amount": "455.00"
+            },
+            {
+              "description": "Conference Coffee Service",
+              "quantity": "7",
+              "unit_price": "120.50",
+              "amount": "843.50"
+            },
+            {
+              "description": "Fresh Fruit Basket",
+              "quantity": "12",
+              "unit_price": "24.00",
+              "amount": "288.00"
+            },
+            {
+              "description": "Bottled Water Crate",
+              "quantity": "12",
+              "unit_price": "14.25",
+              "amount": "171.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "heavy-noise"
+    },
+    {
+      "file": "low_quality/heavy-blur.png",
+      "category": "low_quality",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1024",
+            "invoice_date": "2026-04-24",
+            "supplier_name": "Proseware Consulting LLC",
+            "customer_name": "Litware Holdings",
+            "subtotal": "2481.44",
+            "tax": "124.07",
+            "total": "2605.51",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Glossy Brochure Printing",
+              "quantity": "12",
+              "unit_price": "0.42",
+              "amount": "5.04"
+            },
+            {
+              "description": "Business Card Boxes",
+              "quantity": "6",
+              "unit_price": "19.90",
+              "amount": "119.40"
+            },
+            {
+              "description": "Vinyl Banner Production",
+              "quantity": "11",
+              "unit_price": "210.00",
+              "amount": "2310.00"
+            },
+            {
+              "description": "Letterhead Paper Reams",
+              "quantity": "4",
+              "unit_price": "11.75",
+              "amount": "47.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "heavy-blur"
+    },
+    {
+      "file": "low_quality/faded.png",
+      "category": "low_quality",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1025",
+            "invoice_date": "2026-02-17",
+            "supplier_name": "Northwind Traders Ltd",
+            "customer_name": "Contoso Retail Inc",
+            "subtotal": "22494.00",
+            "tax": "3374.10",
+            "total": "25868.10",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Freight Container Transport",
+              "quantity": "11",
+              "unit_price": "1850.00",
+              "amount": "20350.00"
+            },
+            {
+              "description": "Warehouse Pallet Storage",
+              "quantity": "4",
+              "unit_price": "22.50",
+              "amount": "90.00"
+            },
+            {
+              "description": "Express Courier Delivery",
+              "quantity": "8",
+              "unit_price": "38.00",
+              "amount": "304.00"
+            },
+            {
+              "description": "Customs Clearance Fee",
+              "quantity": "10",
+              "unit_price": "175.00",
+              "amount": "1750.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "faded"
+    },
+    {
+      "file": "low_quality/low-resolution.png",
+      "category": "low_quality",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1026",
+            "invoice_date": "2026-04-16",
+            "supplier_name": "Blue Yonder Printing",
+            "customer_name": "Contoso Retail Inc",
+            "subtotal": "5752.50",
+            "tax": "575.25",
+            "total": "6327.75",
+            "currency": "EUR"
+          },
+          "line_items": [
+            {
+              "description": "Freight Container Transport",
+              "quantity": "3",
+              "unit_price": "1850.00",
+              "amount": "5550.00"
+            },
+            {
+              "description": "Warehouse Pallet Storage",
+              "quantity": "9",
+              "unit_price": "22.50",
+              "amount": "202.50"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "low-resolution"
+    },
+    {
+      "file": "low_quality/sideways.png",
+      "category": "low_quality",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1027",
+            "invoice_date": "2026-08-27",
+            "supplier_name": "Fabrikam Software GmbH",
+            "customer_name": "Contoso Retail Inc",
+            "subtotal": "22470.00",
+            "tax": "2247.00",
+            "total": "24717.00",
+            "currency": "EUR"
+          },
+          "line_items": [
+            {
+              "description": "Freight Container Transport",
+              "quantity": "12",
+              "unit_price": "1850.00",
+              "amount": "22200.00"
+            },
+            {
+              "description": "Warehouse Pallet Storage",
+              "quantity": "12",
+              "unit_price": "22.50",
+              "amount": "270.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "sideways"
+    },
+    {
+      "file": "low_quality/phone-photo.png",
+      "category": "low_quality",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1028",
+            "invoice_date": "2026-03-19",
+            "supplier_name": "Northwind Traders Ltd",
+            "customer_name": "Humongous Insurance",
+            "subtotal": "886.00",
+            "tax": "177.20",
+            "total": "1063.20",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Office Lunch Platter",
+              "quantity": "4",
+              "unit_price": "65.00",
+              "amount": "260.00"
+            },
+            {
+              "description": "Conference Coffee Service",
+              "quantity": "4",
+              "unit_price": "120.50",
+              "amount": "482.00"
+            },
+            {
+              "description": "Fresh Fruit Basket",
+              "quantity": "6",
+              "unit_price": "24.00",
+              "amount": "144.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "phone-photo"
+    },
+    {
+      "file": "spreadsheet/flat.csv",
+      "category": "spreadsheet",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1029",
+            "invoice_date": "2026-08-18",
+            "supplier_name": "Northwind Traders Ltd",
+            "customer_name": "Alpine Ski House",
+            "subtotal": "2687.50",
+            "tax": "268.75",
+            "total": "2956.25",
+            "currency": "USD"
+          },
+          "line_items": []
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "one row, recognized"
+    },
+    {
+      "file": "spreadsheet/flat-semicolon.csv",
+      "category": "spreadsheet",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1030",
+            "invoice_date": "2026-09-26",
+            "supplier_name": "Fabrikam Software GmbH",
+            "customer_name": "Trey Research Group",
+            "subtotal": "1855.00",
+            "tax": "371.00",
+            "total": "2226.00",
+            "currency": "EUR"
+          },
+          "line_items": []
+        },
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1031",
+            "invoice_date": "2026-06-26",
+            "supplier_name": "Tailspin Logistics Pvt Ltd",
+            "customer_name": "Woodgrove Bank",
+            "subtotal": "38250.00",
+            "tax": "3825.00",
+            "total": "42075.00",
+            "currency": "EUR"
+          },
+          "line_items": []
+        },
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1032",
+            "invoice_date": "2026-05-19",
+            "supplier_name": "Coho Industrial Supplies",
+            "customer_name": "Alpine Ski House",
+            "subtotal": "1313.65",
+            "tax": "65.68",
+            "total": "1379.33",
+            "currency": "EUR"
+          },
+          "line_items": []
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "three invoices, semicolons"
+    },
+    {
+      "file": "spreadsheet/two-sheets.xlsx",
+      "category": "spreadsheet",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "SHT-2026-1033",
+            "invoice_date": "2026-06-27",
+            "supplier_name": "Fabrikam Software GmbH",
+            "customer_name": "Humongous Insurance",
+            "subtotal": "182.46",
+            "tax": "36.49",
+            "total": "218.95",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Glossy Brochure Printing",
+              "quantity": "8",
+              "unit_price": "0.42",
+              "amount": "3.36"
+            },
+            {
+              "description": "Business Card Boxes",
+              "quantity": "9",
+              "unit_price": "19.90",
+              "amount": "179.10"
+            }
+          ]
+        },
+        {
+          "fields": {
+            "invoice_number": "SHT-2026-1034",
+            "invoice_date": "2026-02-13",
+            "supplier_name": "Adventure Foods Inc",
+            "customer_name": "City Power and Light",
+            "subtotal": "11190.00",
+            "tax": "2238.00",
+            "total": "13428.00",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Freight Container Transport",
+              "quantity": "6",
+              "unit_price": "1850.00",
+              "amount": "11100.00"
+            },
+            {
+              "description": "Warehouse Pallet Storage",
+              "quantity": "4",
+              "unit_price": "22.50",
+              "amount": "90.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 2,
+      "subject": null,
+      "notes": "one invoice per sheet"
+    },
+    {
+      "file": "spreadsheet/old-format.xls",
+      "category": "spreadsheet",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1035",
+            "invoice_date": "2026-05-19",
+            "supplier_name": "Wide World Importers",
+            "customer_name": "Graphic Design Institute",
+            "subtotal": "873.84",
+            "tax": "131.08",
+            "total": "1004.92",
+            "currency": "USD"
+          },
+          "line_items": []
+        },
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1036",
+            "invoice_date": "2026-06-18",
+            "supplier_name": "Tailspin Logistics Pvt Ltd",
+            "customer_name": "Alpine Ski House",
+            "subtotal": "3327.95",
+            "tax": "332.80",
+            "total": "3660.75",
+            "currency": "USD"
+          },
+          "line_items": []
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "XLS"
+    },
+    {
+      "file": "spreadsheet/cp1252.csv",
+      "category": "spreadsheet",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1037",
+            "invoice_date": "2026-07-13",
+            "supplier_name": "Tailspin Logistics Pvt Ltd",
+            "customer_name": "Litware Holdings",
+            "subtotal": "2143.75",
+            "tax": "428.75",
+            "total": "2572.50",
+            "currency": "EUR"
+          },
+          "line_items": [
+            {
+              "description": "Office Lunch Platter",
+              "quantity": "11",
+              "unit_price": "65.00",
+              "amount": "715.00"
+            },
+            {
+              "description": "Conference Coffee Service",
+              "quantity": "9",
+              "unit_price": "120.50",
+              "amount": "1084.50"
+            },
+            {
+              "description": "Fresh Fruit Basket",
+              "quantity": "9",
+              "unit_price": "24.00",
+              "amount": "216.00"
+            },
+            {
+              "description": "Bottled Water Crate",
+              "quantity": "9",
+              "unit_price": "14.25",
+              "amount": "128.25"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "not UTF-8, details and table"
+    },
+    {
+      "file": "spreadsheet/odd-columns.csv",
+      "category": "spreadsheet",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "INV-2026-1038",
+            "invoice_date": "2026-03-15",
+            "supplier_name": "Northwind Traders Ltd",
+            "customer_name": "City Power and Light",
+            "subtotal": "2174.50",
+            "tax": "217.45",
+            "total": "2391.95",
+            "currency": "USD"
+          },
+          "line_items": []
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "unknown columns, needs the LLM"
+    },
+    {
+      "file": "seeded_error/wrong-total.pdf",
+      "category": "seeded_error",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "BAD-2026-1039",
+            "invoice_date": "2026-01-16",
+            "supplier_name": "Coho Industrial Supplies",
+            "customer_name": "City Power and Light",
+            "subtotal": "33119.97",
+            "tax": "6623.99",
+            "total": "39793.96",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Annual Cloud Hosting Subscription",
+              "quantity": "9",
+              "unit_price": "1200.00",
+              "amount": "10800.00"
+            },
+            {
+              "description": "Database Support Plan",
+              "quantity": "3",
+              "unit_price": "450.00",
+              "amount": "1350.00"
+            },
+            {
+              "description": "Security Audit Service",
+              "quantity": "9",
+              "unit_price": "2300.00",
+              "amount": "20700.00"
+            },
+            {
+              "description": "User Licence Pack",
+              "quantity": "3",
+              "unit_price": "89.99",
+              "amount": "269.97"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [
+        "total_mismatch"
+      ],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "subtotal + tax does not equal total"
+    },
+    {
+      "file": "seeded_error/wrong-subtotal.pdf",
+      "category": "seeded_error",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "BAD-2026-1040",
+            "invoice_date": "2026-07-17",
+            "supplier_name": "Coho Industrial Supplies",
+            "customer_name": "City Power and Light",
+            "subtotal": "7613.50",
+            "tax": "380.68",
+            "total": "7994.18",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Freight Container Transport",
+              "quantity": "4",
+              "unit_price": "1850.00",
+              "amount": "7400.00"
+            },
+            {
+              "description": "Warehouse Pallet Storage",
+              "quantity": "5",
+              "unit_price": "22.50",
+              "amount": "112.50"
+            },
+            {
+              "description": "Express Courier Delivery",
+              "quantity": "2",
+              "unit_price": "38.00",
+              "amount": "76.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [
+        "line_items_subtotal_mismatch"
+      ],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "line items do not add up to the subtotal"
+    },
+    {
+      "file": "seeded_error/wrong-line.pdf",
+      "category": "seeded_error",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "BAD-2026-1041",
+            "invoice_date": "2026-04-26",
+            "supplier_name": "Coho Industrial Supplies",
+            "customer_name": "Woodgrove Bank",
+            "subtotal": "1843.82",
+            "tax": "184.38",
+            "total": "2028.20",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Glossy Brochure Printing",
+              "quantity": "11",
+              "unit_price": "3.42",
+              "amount": "4.62"
+            },
+            {
+              "description": "Business Card Boxes",
+              "quantity": "8",
+              "unit_price": "19.90",
+              "amount": "159.20"
+            },
+            {
+              "description": "Vinyl Banner Production",
+              "quantity": "8",
+              "unit_price": "210.00",
+              "amount": "1680.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [
+        "line_item_amount_mismatch"
+      ],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "quantity times price does not equal amount"
+    },
+    {
+      "file": "seeded_error/no-date.pdf",
+      "category": "seeded_error",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "BAD-2026-1042",
+            "invoice_date": null,
+            "supplier_name": "Coho Industrial Supplies",
+            "customer_name": "Alpine Ski House",
+            "subtotal": "11325.00",
+            "tax": "1132.50",
+            "total": "12457.50",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Freight Container Transport",
+              "quantity": "6",
+              "unit_price": "1850.00",
+              "amount": "11100.00"
+            },
+            {
+              "description": "Warehouse Pallet Storage",
+              "quantity": "10",
+              "unit_price": "22.50",
+              "amount": "225.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [
+        "missing_required_field"
+      ],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "no invoice date printed"
+    },
+    {
+      "file": "seeded_error/no-total.pdf",
+      "category": "seeded_error",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "BAD-2026-1043",
+            "invoice_date": "2026-08-14",
+            "supplier_name": "Adventure Foods Inc",
+            "customer_name": "Contoso Retail Inc",
+            "subtotal": "20696.50",
+            "tax": null,
+            "total": null,
+            "currency": null
+          },
+          "line_items": [
+            {
+              "description": "Freight Container Transport",
+              "quantity": "10",
+              "unit_price": "1850.00",
+              "amount": "18500.00"
+            },
+            {
+              "description": "Warehouse Pallet Storage",
+              "quantity": "7",
+              "unit_price": "22.50",
+              "amount": "157.50"
+            },
+            {
+              "description": "Express Courier Delivery",
+              "quantity": "3",
+              "unit_price": "38.00",
+              "amount": "114.00"
+            },
+            {
+              "description": "Customs Clearance Fee",
+              "quantity": "11",
+              "unit_price": "175.00",
+              "amount": "1925.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [
+        "missing_field",
+        "missing_required_field"
+      ],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "no total or tax printed, which must not be calculated"
+    },
+    {
+      "file": "seeded_error/future-date.pdf",
+      "category": "seeded_error",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "BAD-2026-1044",
+            "invoice_date": "2031-06-15",
+            "supplier_name": "Wide World Importers",
+            "customer_name": "Contoso Retail Inc",
+            "subtotal": "1231.00",
+            "tax": "123.10",
+            "total": "1354.10",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Office Lunch Platter",
+              "quantity": "3",
+              "unit_price": "65.00",
+              "amount": "195.00"
+            },
+            {
+              "description": "Conference Coffee Service",
+              "quantity": "8",
+              "unit_price": "120.50",
+              "amount": "964.00"
+            },
+            {
+              "description": "Fresh Fruit Basket",
+              "quantity": "3",
+              "unit_price": "24.00",
+              "amount": "72.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [
+        "date_in_future"
+      ],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "dated years ahead"
+    },
+    {
+      "file": "seeded_error/duplicate-digital.pdf",
+      "category": "seeded_error",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "DUP-2026-1045",
+            "invoice_date": "2026-07-28",
+            "supplier_name": "Coho Industrial Supplies",
+            "customer_name": "Graphic Design Institute",
+            "subtotal": "1813.00",
+            "tax": "90.65",
+            "total": "1903.65",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Office Lunch Platter",
+              "quantity": "9",
+              "unit_price": "65.00",
+              "amount": "585.00"
+            },
+            {
+              "description": "Conference Coffee Service",
+              "quantity": "8",
+              "unit_price": "120.50",
+              "amount": "964.00"
+            },
+            {
+              "description": "Fresh Fruit Basket",
+              "quantity": "11",
+              "unit_price": "24.00",
+              "amount": "264.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "the original"
+    },
+    {
+      "file": "seeded_error/duplicate-scan.pdf",
+      "category": "seeded_error",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "DUP-2026-1045",
+            "invoice_date": "2026-07-28",
+            "supplier_name": "Coho Industrial Supplies",
+            "customer_name": "Graphic Design Institute",
+            "subtotal": "1813.00",
+            "tax": "90.65",
+            "total": "1903.65",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Office Lunch Platter",
+              "quantity": "9",
+              "unit_price": "65.00",
+              "amount": "585.00"
+            },
+            {
+              "description": "Conference Coffee Service",
+              "quantity": "8",
+              "unit_price": "120.50",
+              "amount": "964.00"
+            },
+            {
+              "description": "Fresh Fruit Basket",
+              "quantity": "11",
+              "unit_price": "24.00",
+              "amount": "264.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [
+        "duplicate_invoice"
+      ],
+      "depends_on": [
+        "seeded_error/duplicate-digital.pdf"
+      ],
+      "pages": 1,
+      "subject": null,
+      "notes": "a scan of the same invoice"
+    },
+    {
+      "file": "seeded_error/match-original.pdf",
+      "category": "seeded_error",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "CRS-2026-1046",
+            "invoice_date": "2026-07-25",
+            "supplier_name": "Wide World Importers",
+            "customer_name": "City Power and Light",
+            "subtotal": "200.26",
+            "tax": "20.03",
+            "total": "220.29",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Glossy Brochure Printing",
+              "quantity": "3",
+              "unit_price": "0.42",
+              "amount": "1.26"
+            },
+            {
+              "description": "Business Card Boxes",
+              "quantity": "10",
+              "unit_price": "19.90",
+              "amount": "199.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "PDF of a pair that agree"
+    },
+    {
+      "file": "seeded_error/match-copy.csv",
+      "category": "seeded_error",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "CRS-2026-1046",
+            "invoice_date": "2026-07-25",
+            "supplier_name": "Wide World Importers",
+            "customer_name": "City Power and Light",
+            "subtotal": "200.26",
+            "tax": "20.03",
+            "total": "220.29",
+            "currency": "USD"
+          },
+          "line_items": []
+        }
+      ],
+      "expected_issues": [
+        "cross_document_verified"
+      ],
+      "depends_on": [
+        "seeded_error/match-original.pdf"
+      ],
+      "pages": 1,
+      "subject": null,
+      "notes": "the same invoice as a spreadsheet"
+    },
+    {
+      "file": "seeded_error/mismatch-original.pdf",
+      "category": "seeded_error",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "CRS-2026-1047",
+            "invoice_date": "2026-01-25",
+            "supplier_name": "Wide World Importers",
+            "customer_name": "Trey Research Group",
+            "subtotal": "3555.90",
+            "tax": "355.59",
+            "total": "3911.49",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Industrial Bearing Kit",
+              "quantity": "8",
+              "unit_price": "312.50",
+              "amount": "2500.00"
+            },
+            {
+              "description": "Hydraulic Pump Seal",
+              "quantity": "2",
+              "unit_price": "18.75",
+              "amount": "37.50"
+            },
+            {
+              "description": "Stainless Steel Bolts",
+              "quantity": "4",
+              "unit_price": "0.85",
+              "amount": "3.40"
+            },
+            {
+              "description": "Conveyor Belt Section",
+              "quantity": "7",
+              "unit_price": "145.00",
+              "amount": "1015.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "PDF of a pair that disagree"
+    },
+    {
+      "file": "seeded_error/mismatch-copy.xlsx",
+      "category": "seeded_error",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "CRS-2026-1047",
+            "invoice_date": "2026-01-25",
+            "supplier_name": "Wide World Importers",
+            "customer_name": "Trey Research Group",
+            "subtotal": "3555.90",
+            "tax": "355.59",
+            "total": "3951.49",
+            "currency": "USD"
+          },
+          "line_items": []
+        }
+      ],
+      "expected_issues": [
+        "pdf_excel_mismatch",
+        "total_mismatch"
+      ],
+      "depends_on": [
+        "seeded_error/mismatch-original.pdf"
+      ],
+      "pages": 1,
+      "subject": null,
+      "notes": "the spreadsheet disagrees on the total"
+    },
+    {
+      "file": "seeded_error/pdf-pair-original.pdf",
+      "category": "seeded_error",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "CRS-2026-1048",
+            "invoice_date": "2026-02-24",
+            "supplier_name": "Fabrikam Software GmbH",
+            "customer_name": "City Power and Light",
+            "subtotal": "15298.50",
+            "tax": "764.93",
+            "total": "16063.43",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Freight Container Transport",
+              "quantity": "7",
+              "unit_price": "1850.00",
+              "amount": "12950.00"
+            },
+            {
+              "description": "Warehouse Pallet Storage",
+              "quantity": "7",
+              "unit_price": "22.50",
+              "amount": "157.50"
+            },
+            {
+              "description": "Express Courier Delivery",
+              "quantity": "7",
+              "unit_price": "38.00",
+              "amount": "266.00"
+            },
+            {
+              "description": "Customs Clearance Fee",
+              "quantity": "11",
+              "unit_price": "175.00",
+              "amount": "1925.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "first PDF of a pair"
+    },
+    {
+      "file": "seeded_error/pdf-pair-copy.pdf",
+      "category": "seeded_error",
+      "expected_outcome": "completed",
+      "invoices": [
+        {
+          "fields": {
+            "invoice_number": "CRS-2026-1048",
+            "invoice_date": "2026-02-25",
+            "supplier_name": "Fabrikam Software GmbH",
+            "customer_name": "City Power and Light",
+            "subtotal": "15298.50",
+            "tax": "764.93",
+            "total": "16063.43",
+            "currency": "USD"
+          },
+          "line_items": [
+            {
+              "description": "Freight Container Transport",
+              "quantity": "7",
+              "unit_price": "1850.00",
+              "amount": "12950.00"
+            },
+            {
+              "description": "Warehouse Pallet Storage",
+              "quantity": "7",
+              "unit_price": "22.50",
+              "amount": "157.50"
+            },
+            {
+              "description": "Express Courier Delivery",
+              "quantity": "7",
+              "unit_price": "38.00",
+              "amount": "266.00"
+            },
+            {
+              "description": "Customs Clearance Fee",
+              "quantity": "11",
+              "unit_price": "175.00",
+              "amount": "1925.00"
+            }
+          ]
+        }
+      ],
+      "expected_issues": [
+        "pdf_pdf_mismatch"
+      ],
+      "depends_on": [
+        "seeded_error/pdf-pair-original.pdf"
+      ],
+      "pages": 1,
+      "subject": null,
+      "notes": "second PDF disagrees on the date"
+    },
+    {
+      "file": "corrupted/not-really.pdf",
+      "category": "corrupted",
+      "expected_outcome": "failed",
+      "invoices": [],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "PDF header, garbage body"
+    },
+    {
+      "file": "corrupted/password.pdf",
+      "category": "corrupted",
+      "expected_outcome": "failed",
+      "invoices": [],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "password protected"
+    },
+    {
+      "file": "corrupted/blank.pdf",
+      "category": "corrupted",
+      "expected_outcome": "failed",
+      "invoices": [],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "one blank page"
+    },
+    {
+      "file": "corrupted/truncated.png",
+      "category": "corrupted",
+      "expected_outcome": "failed",
+      "invoices": [],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "cut short"
+    },
+    {
+      "file": "corrupted/empty.csv",
+      "category": "corrupted",
+      "expected_outcome": "failed",
+      "invoices": [],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "zero bytes"
+    },
+    {
+      "file": "corrupted/program.pdf",
+      "category": "corrupted",
+      "expected_outcome": "rejected",
+      "invoices": [],
+      "expected_issues": [],
+      "depends_on": [],
+      "pages": 1,
+      "subject": null,
+      "notes": "an executable named .pdf"
+    }
+  ]
+}

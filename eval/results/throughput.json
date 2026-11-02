@@ -1,0 +1,23 @@
+{
+  "one_document": {
+    "documents": 1,
+    "pages_each": 40,
+    "total_pages": 40,
+    "span_seconds": 120.735218,
+    "seconds_per_page_per_document": [
+      3.0185500000000003
+    ],
+    "pages_per_minute": 19.878209852571764
+  },
+  "two_documents": {
+    "documents": 2,
+    "pages_each": 40,
+    "total_pages": 80,
+    "span_seconds": 135.949925,
+    "seconds_per_page_per_document": [
+      3.31975,
+      3.2923250000000004
+    ],
+    "pages_per_minute": 35.30711767586484
+  }
+}

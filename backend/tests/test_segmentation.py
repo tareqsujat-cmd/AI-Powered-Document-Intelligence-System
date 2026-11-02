@@ -35,10 +35,32 @@ def ranges(segments: list[Segment]) -> list[tuple[int, int]]:
         ("Invoice Number\nINV-500", "INV-500"),
         ("Thank you for your invoice payment", None),
         ("no numbers here", None),
+        # Headings in one row, values in the next: tabs from a text layer, spaces from OCR.
+        (
+            "BILLED TO\tINVOICE #\tDATE OF ISSUE\nAcme Ltd\tBTC-2026-1008\t21 March 2026",
+            "BTC-2026-1008",
+        ),
+        ("BILLED TO INVOICE # DATE OF ISSUE\nAcme Ltd INV-2026-1014 24 June 2026", "INV-2026-1014"),
+        ("DATE\tINVOICE NO.\n2026-03-21\t2026/0042", "2026/0042"),
+        ("DATE INVOICE NO.\n2026-03-21 X-77 Unit 4", "X-77"),
+        ("INVOICE #\tDATE\nAcme Ltd\t21 March 2026", None),
+        ("Invoice No: 77\nShip to Unit B-12", None),
+        ("INVOICE # DATE\n2026 12 units", None),
     ],
 )
 def test_find_invoice_number(text: str, expected: str | None) -> None:
     assert find_invoice_number(text) == expected
+
+
+def test_invoices_with_numbers_under_column_headings_are_separated() -> None:
+    # Found by the evaluation: a batch PDF merged two invoices whose number sat under its heading.
+    pages = [
+        page(1, "INVOICE\nInvoice Number: BTC-1007\nTotal 5.00"),
+        page(2, "BILLED TO\tINVOICE #\tDATE\nAcme Ltd\tBTC-1008\t21 March 2026\nAmount Due 6.00"),
+        page(3, "BILLED TO INVOICE # DATE\nAcme Ltd BTC-1009 22 March 2026\nAmount Due 7.00"),
+    ]
+
+    assert ranges(split_into_invoices(pages)) == [(1, 1), (2, 2), (3, 3)]
 
 
 def test_different_numbers_start_new_invoices() -> None:
