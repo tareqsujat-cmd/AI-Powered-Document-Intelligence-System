@@ -22,11 +22,22 @@ import {
   stageLabel,
 } from "@/lib/format";
 import { usePolling } from "@/lib/usePolling";
+import {
+  ActivityIcon,
+  ClockIcon,
+  ErrorIcon,
+  FlagIcon,
+  InboxIcon,
+  StackIcon,
+  TargetIcon,
+} from "./icons";
 import { UploadPanel } from "./UploadPanel";
 import {
   Button,
   Card,
+  EmptyState,
   ErrorNote,
+  FileTypeIcon,
   FormLabel,
   INPUT_CLASS,
   ProgressBar,
@@ -114,7 +125,7 @@ export function Dashboard() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h1 className="text-xl font-semibold tracking-tight">Documents</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Documents</h1>
         <p className="text-sm text-slate-600">
           Upload invoices, follow their progress, and review what was extracted.
         </p>
@@ -144,22 +155,61 @@ function MetricsStrip({ metrics }: { metrics: Metrics | null }) {
   const byStatus = metrics?.documents_by_status ?? {};
   const active = (byStatus.queued ?? 0) + (byStatus.processing ?? 0);
   const items = [
-    { label: "Documents", value: metrics ? String(metrics.documents_total) : "—" },
-    { label: "In progress", value: metrics ? String(active) : "—" },
-    { label: "Needs review", value: metrics ? String(metrics.needs_review) : "—" },
-    { label: "Failed", value: metrics ? String(byStatus.failed ?? 0) : "—" },
-    { label: "Success rate", value: metrics ? formatPercent(metrics.success_rate) : "—" },
+    {
+      label: "Documents",
+      value: metrics ? String(metrics.documents_total) : "—",
+      icon: StackIcon,
+      tint: "bg-indigo-50 text-indigo-600",
+    },
+    {
+      label: "In progress",
+      value: metrics ? String(active) : "—",
+      icon: ActivityIcon,
+      tint: "bg-sky-50 text-sky-600",
+    },
+    {
+      label: "Needs review",
+      value: metrics ? String(metrics.needs_review) : "—",
+      icon: FlagIcon,
+      tint: "bg-amber-50 text-amber-600",
+    },
+    {
+      label: "Failed",
+      value: metrics ? String(byStatus.failed ?? 0) : "—",
+      icon: ErrorIcon,
+      tint: "bg-red-50 text-red-600",
+    },
+    {
+      label: "Success rate",
+      value: metrics ? formatPercent(metrics.success_rate) : "—",
+      icon: TargetIcon,
+      tint: "bg-emerald-50 text-emerald-600",
+    },
     {
       label: "Average time",
       value: metrics ? formatDuration(metrics.processing_time.mean_seconds) : "—",
+      icon: ClockIcon,
+      tint: "bg-violet-50 text-violet-600",
     },
   ];
   return (
-    <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-slate-200 bg-slate-200 sm:grid-cols-3 lg:grid-cols-6">
+    <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
       {items.map((item) => (
-        <div key={item.label} className="flex flex-col gap-0.5 bg-white px-4 py-3">
-          <dt className="text-xs text-slate-500">{item.label}</dt>
-          <dd className="text-lg font-semibold tabular-nums text-slate-900">{item.value}</dd>
+        <div
+          key={item.label}
+          className="flex items-center gap-3 rounded-xl bg-white px-3.5 py-3 shadow-sm shadow-slate-900/5 ring-1 ring-slate-900/5"
+        >
+          <span
+            className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${item.tint}`}
+          >
+            <item.icon className="size-5" />
+          </span>
+          <div className="flex min-w-0 flex-col">
+            <dt className="truncate text-xs text-slate-500">{item.label}</dt>
+            <dd className="text-lg font-semibold leading-6 tabular-nums tracking-tight text-slate-900">
+              {item.value}
+            </dd>
+          </div>
         </div>
       ))}
     </dl>
@@ -341,23 +391,23 @@ function RetryFailedBar({ metrics, onDone }: { metrics: Metrics | null; onDone: 
 function DocumentTable({ data, loading }: { data: DocumentList | null; loading: boolean }) {
   if (!data) {
     return (
-      <Card className="px-4 py-10 text-center text-sm text-slate-500">
+      <EmptyState icon={<InboxIcon className="size-6" />}>
         {loading ? "Loading documents…" : "No documents to show."}
-      </Card>
+      </EmptyState>
     );
   }
   if (data.items.length === 0) {
     return (
-      <Card className="px-4 py-10 text-center text-sm text-slate-500">
+      <EmptyState icon={<InboxIcon className="size-6" />}>
         No documents match. Upload a file above, or change the filters.
-      </Card>
+      </EmptyState>
     );
   }
   return (
     <Card className="overflow-x-auto">
       <table className="w-full min-w-[760px] text-left text-sm">
         <thead>
-          <tr className="border-b border-slate-200 text-xs font-medium text-slate-500">
+          <tr className="border-b border-slate-200 bg-slate-50/70 text-xs font-medium text-slate-500">
             <th scope="col" className="px-4 py-2.5 font-medium">File</th>
             <th scope="col" className="px-4 py-2.5 font-medium">Status</th>
             <th scope="col" className="px-4 py-2.5 text-right font-medium">Invoices</th>
@@ -379,18 +429,23 @@ function DocumentTable({ data, loading }: { data: DocumentList | null; loading: 
 function DocumentRow({ item }: { item: DocumentSummary }) {
   const busy = isBusy(item.status);
   return (
-    <tr className="align-top hover:bg-slate-50">
+    <tr className="align-top transition-colors hover:bg-indigo-50/40">
       <td className="max-w-xs px-4 py-3">
-        <Link
-          href={`/documents/${item.id}`}
-          className="block truncate font-medium text-slate-900 hover:text-indigo-700 hover:underline"
-          title={item.filename}
-        >
-          {item.filename}
-        </Link>
-        <span className="text-xs uppercase text-slate-500">
-          {item.file_type} · {formatBytes(item.size_bytes)}
-        </span>
+        <div className="flex items-center gap-3">
+          <FileTypeIcon type={item.file_type} />
+          <div className="min-w-0">
+            <Link
+              href={`/documents/${item.id}`}
+              className="block truncate font-medium text-slate-900 hover:text-indigo-700 hover:underline"
+              title={item.filename}
+            >
+              {item.filename}
+            </Link>
+            <span className="text-xs uppercase text-slate-500">
+              {item.file_type} · {formatBytes(item.size_bytes)}
+            </span>
+          </div>
+        </div>
       </td>
       <td className="px-4 py-3">
         <div className="flex flex-wrap gap-1">

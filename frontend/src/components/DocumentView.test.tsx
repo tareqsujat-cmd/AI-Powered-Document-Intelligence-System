@@ -127,7 +127,7 @@ describe("DocumentView: loading", () => {
     stubDocument(makeDetail({ needs_review: true, page_count: 3, size_bytes: 2048 }));
     await show();
 
-    expect(screen.getByRole("link", { name: "← Documents" })).toHaveAttribute("href", "/");
+    expect(screen.getByRole("link", { name: "Documents" })).toHaveAttribute("href", "/");
     expect(screen.getByText("Completed")).toBeInTheDocument();
     expect(screen.getByText("Needs review")).toBeInTheDocument();
     expect(screen.getByText("2 KB")).toBeInTheDocument();

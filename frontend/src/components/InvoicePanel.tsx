@@ -14,7 +14,16 @@ import {
   type ValidationIssue,
 } from "@/lib/api";
 import { FIELD_LABELS, FIELD_ORDER, MONEY_FIELDS, SEVERITY_ORDER } from "@/lib/format";
-import { Button, Card, ConfidenceMeter, ErrorNote, INPUT_CLASS, SeverityBadge } from "./ui";
+import { AlertIcon, CheckCircleIcon, ErrorIcon, InfoIcon } from "./icons";
+import {
+  Button,
+  Card,
+  CardTitle,
+  ConfidenceMeter,
+  ErrorNote,
+  INPUT_CLASS,
+  SeverityBadge,
+} from "./ui";
 
 function messageOf(problem: unknown, fallback: string): string {
   return problem instanceof Error ? problem.message : fallback;
@@ -51,9 +60,7 @@ export function InvoicePanel({
   return (
     <div className="flex flex-col gap-4">
       <Card>
-        <h2 className="border-b border-slate-200 px-4 py-2.5 text-sm font-semibold">
-          Extracted fields
-        </h2>
+        <CardTitle>Extracted fields</CardTitle>
         <dl className="divide-y divide-slate-100">
           {FIELD_ORDER.map((name) => (
             <FieldRow
@@ -102,7 +109,7 @@ export function InvoicePanel({
         </Card>
       )}
 
-      <p className="px-1 text-xs text-slate-500">
+      <p className="px-1 text-xs leading-5 text-slate-500">
         {result.method === "llm"
           ? `Extracted by ${result.llm_model ?? "an LLM"}, prompt version ${result.prompt_version ?? "unknown"}.`
           : "Mapped directly from the spreadsheet's columns, with no LLM."}{" "}
@@ -174,7 +181,7 @@ function FieldRow({
 
   const label = FIELD_LABELS[name];
   return (
-    <div className="grid grid-cols-[8rem_1fr] gap-x-3 px-4 py-2.5 text-sm">
+    <div className="grid grid-cols-[7rem_1fr] gap-x-3 px-4 py-3 text-sm sm:grid-cols-[8rem_1fr]">
       <dt className="pt-0.5 text-slate-500">{label}</dt>
       <dd className="min-w-0">
         {editing && !readOnly ? (
@@ -207,7 +214,7 @@ function FieldRow({
           <div className="flex items-start justify-between gap-3">
             <div className="flex min-w-0 flex-col gap-0.5">
               {field.value !== null ? (
-                <span className="break-words font-medium tabular-nums text-slate-900">
+                <span className="break-words font-semibold tabular-nums text-slate-900">
                   {field.value}
                 </span>
               ) : (
@@ -323,14 +330,17 @@ function LineItems({
 
   return (
     <Card>
-      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-2">
-        <h2 className="text-sm font-semibold">Line items ({drafts?.length ?? items.length})</h2>
-        {!readOnly && !drafts && (
-          <Button variant="ghost" onClick={startEditing}>
-            Edit
-          </Button>
-        )}
-      </div>
+      <CardTitle
+        aside={
+          !readOnly && !drafts ? (
+            <Button variant="ghost" className="-my-1" onClick={startEditing}>
+              Edit
+            </Button>
+          ) : undefined
+        }
+      >
+        Line items ({drafts?.length ?? items.length})
+      </CardTitle>
       {!drafts && items.length === 0 && (
         <p className="px-4 py-4 text-sm text-slate-500">No line items were found.</p>
       )}
@@ -338,7 +348,7 @@ function LineItems({
         <div className="overflow-x-auto">
           <table className="w-full min-w-[28rem] text-left text-sm">
             <thead>
-              <tr className="border-b border-slate-100 text-xs text-slate-500">
+              <tr className="border-b border-slate-100 bg-slate-50/70 text-xs text-slate-500">
                 {CELLS.map((cell) => (
                   <th
                     key={cell.key}
@@ -461,11 +471,12 @@ function Issues({
   const open = issues.filter((issue) => issue.severity !== "info" && !issue.is_resolved).length;
   return (
     <Card>
-      <h2 className="border-b border-slate-200 px-4 py-2.5 text-sm font-semibold">
-        Validation {open > 0 ? `(${open} to review)` : ""}
-      </h2>
+      <CardTitle>Validation {open > 0 ? `(${open} to review)` : ""}</CardTitle>
       {ordered.length === 0 ? (
-        <p className="px-4 py-4 text-sm text-emerald-800">All checks passed.</p>
+        <p className="flex items-center gap-2 px-4 py-4 text-sm font-medium text-emerald-800">
+          <CheckCircleIcon className="size-5 text-emerald-500" />
+          All checks passed.
+        </p>
       ) : (
         <ul className="divide-y divide-slate-100">
           {ordered.map((issue) => (
@@ -512,13 +523,28 @@ function IssueRow({
 
   const verified = issue.code === "cross_document_verified";
   const canReview = !readOnly && issue.severity !== "info";
+  const Glyph = verified
+    ? CheckCircleIcon
+    : issue.severity === "error"
+      ? ErrorIcon
+      : issue.severity === "warning"
+        ? AlertIcon
+        : InfoIcon;
+  const glyphColor = verified
+    ? "text-emerald-500"
+    : issue.severity === "error"
+      ? "text-red-500"
+      : issue.severity === "warning"
+        ? "text-amber-500"
+        : "text-slate-400";
   return (
     <li className={`flex flex-col gap-1 px-4 py-3 text-sm ${issue.is_resolved ? "opacity-60" : ""}`}>
       <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 flex-col gap-1">
+        <Glyph className={`mt-0.5 size-5 shrink-0 ${glyphColor}`} />
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
           <div className="flex flex-wrap items-center gap-1.5">
             {verified ? (
-              <span className="inline-flex rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800">
+              <span className="inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-800 ring-1 ring-inset ring-emerald-600/20">
                 verified
               </span>
             ) : (

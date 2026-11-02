@@ -23,9 +23,19 @@ import {
   stageLabel,
 } from "@/lib/format";
 import { usePolling } from "@/lib/usePolling";
+import { ArrowLeftIcon, CheckCircleIcon, ClockIcon, ErrorIcon } from "./icons";
 import { InvoicePanel } from "./InvoicePanel";
 import { PagePreview } from "./PagePreview";
-import { Button, Card, ErrorNote, ProgressBar, ReviewBadge, StatusBadge } from "./ui";
+import {
+  Button,
+  Card,
+  EmptyState,
+  ErrorNote,
+  FileTypeIcon,
+  ProgressBar,
+  ReviewBadge,
+  StatusBadge,
+} from "./ui";
 
 const BUSY_POLL_MS = 2000;
 const IDLE_POLL_MS = 30000;
@@ -117,7 +127,7 @@ export function DocumentView({ documentId }: { documentId: string }) {
       {error && <ErrorNote>{error}</ErrorNote>}
 
       <div className="grid items-start gap-5 lg:grid-cols-2">
-        <div className="lg:sticky lg:top-4">
+        <div className="lg:sticky lg:top-20">
           <PagePreview document={document} page={shownPage} onPageChange={setPage} />
         </div>
 
@@ -144,13 +154,23 @@ export function DocumentView({ documentId }: { documentId: string }) {
               onShowPage={setPage}
             />
           ) : (
-            <Card className="px-4 py-8 text-center text-sm text-slate-500">
+            <EmptyState
+              icon={
+                busy ? (
+                  <ClockIcon className="size-6" />
+                ) : document.status === "failed" ? (
+                  <ErrorIcon className="size-6" />
+                ) : (
+                  <CheckCircleIcon className="size-6" />
+                )
+              }
+            >
               {busy
                 ? "Results will appear here as soon as they are ready."
                 : document.status === "failed"
                   ? "This document failed before any invoice data was extracted."
                   : "No invoice data was found."}
-            </Card>
+            </EmptyState>
           )}
           <HistoryPanel documentId={document.id} refreshKey={`${document.updated_at}-${changeCount}`} />
         </div>
@@ -187,12 +207,18 @@ function DocumentHeader({
 
   return (
     <div className="flex flex-col gap-3">
-      <Link href="/" className="text-sm text-indigo-700 hover:underline">
-        ← Documents
+      <Link
+        href="/"
+        className="inline-flex w-fit items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-indigo-700"
+      >
+        <ArrowLeftIcon className="size-4" />
+        Documents
       </Link>
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="flex min-w-0 flex-col gap-1">
-          <h1 className="break-words text-xl font-semibold tracking-tight">{document.filename}</h1>
+        <div className="flex min-w-0 items-start gap-3">
+          <FileTypeIcon type={document.file_type} size="lg" />
+          <div className="flex min-w-0 flex-col gap-1">
+          <h1 className="break-words text-2xl font-semibold tracking-tight">{document.filename}</h1>
           <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
             <StatusBadge status={document.status} />
             {document.needs_review && <ReviewBadge />}
@@ -204,6 +230,7 @@ function DocumentHeader({
               </span>
             )}
             <span>Uploaded {formatDateTime(document.created_at)}</span>
+          </div>
           </div>
         </div>
         {!busy && (
@@ -237,7 +264,7 @@ function DocumentHeader({
         <div
           role="alertdialog"
           aria-label="Confirm reprocessing"
-          className="flex flex-col gap-2 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950"
+          className="flex flex-col gap-3 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-950 ring-1 ring-inset ring-amber-300"
         >
           <p>
             This reads the whole file again and extracts it from scratch, replacing the current
@@ -282,10 +309,10 @@ function InvoiceTabs({
               aria-selected={active}
               onClick={() => onSelect(index)}
               title={pageRangeLabel(result.page_start, result.page_end)}
-              className={`rounded-md border px-2.5 py-1 text-sm ${
+              className={`rounded-lg px-2.5 py-1 text-sm font-medium ring-1 ring-inset transition-colors ${
                 active
-                  ? "border-indigo-600 bg-indigo-50 font-medium text-indigo-900"
-                  : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                  ? "bg-indigo-600 text-white ring-indigo-600"
+                  : "bg-white text-slate-700 ring-slate-300 hover:bg-slate-50"
               }`}
             >
               {invoiceTabLabel(result)}
@@ -329,7 +356,7 @@ function HistoryPanel({ documentId, refreshKey }: { documentId: string; refreshK
         type="button"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="flex w-full items-center justify-between px-4 py-2.5 text-left text-sm font-semibold"
+        className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm font-semibold hover:bg-slate-50"
       >
         History
         <span aria-hidden="true" className="text-slate-400">{open ? "−" : "+"}</span>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
 import { ApiError, uploadFile } from "@/lib/api";
 import { formatBytes } from "@/lib/format";
+import { CheckCircleIcon, ErrorIcon, UploadIcon } from "./icons";
 import { ProgressBar } from "./ui";
 
 const ACCEPT = ".pdf,.jpg,.jpeg,.png,.tif,.tiff,.xlsx,.xls,.csv";
@@ -135,16 +136,27 @@ export function UploadPanel({ onUploaded }: { onUploaded?: () => void }) {
           setDragging(false);
           addFiles(event.dataTransfer.files);
         }}
-        className={`flex flex-col items-center gap-2 rounded-lg border-2 border-dashed px-6 py-6 text-center transition-colors ${
-          dragging ? "border-indigo-600 bg-indigo-50" : "border-slate-300 bg-white"
+        className={`group flex flex-col items-center gap-3 rounded-xl border-2 border-dashed px-6 py-8 text-center transition-colors ${
+          dragging
+            ? "border-indigo-500 bg-indigo-50"
+            : "border-slate-300 bg-white/70 hover:border-indigo-400 hover:bg-white"
         }`}
       >
-        <p className="text-sm text-slate-700">
+        <span
+          className={`flex size-11 items-center justify-center rounded-xl transition-colors ${
+            dragging
+              ? "bg-indigo-600 text-white"
+              : "bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100"
+          }`}
+        >
+          <UploadIcon className="size-5" />
+        </span>
+        <p className="text-sm font-medium text-slate-800">
           Drag invoices here, or{" "}
           <button
             type="button"
             onClick={() => input.current?.click()}
-            className="font-medium text-indigo-700 underline underline-offset-2 hover:text-indigo-900"
+            className="font-semibold text-indigo-600 underline decoration-indigo-300 underline-offset-2 hover:text-indigo-800 hover:decoration-indigo-600"
           >
             choose files
           </button>
@@ -180,7 +192,7 @@ export function UploadPanel({ onUploaded }: { onUploaded?: () => void }) {
               </button>
             )}
           </div>
-          <ul className="flex max-h-56 flex-col divide-y divide-slate-100 overflow-y-auto rounded-md border border-slate-200 bg-white">
+          <ul className="flex max-h-56 flex-col divide-y divide-slate-100 overflow-y-auto rounded-xl bg-white shadow-sm shadow-slate-900/5 ring-1 ring-slate-900/5">
             {rows.map((row) => (
               <UploadRowView key={row.key} row={row} />
             ))}
@@ -211,7 +223,8 @@ function UploadRowView({ row }: { row: UploadRow }) {
         </p>
       )}
       {state.phase === "accepted" && (
-        <p className="text-xs text-emerald-800">
+        <p className="flex items-center gap-1.5 text-xs text-emerald-800">
+          <CheckCircleIcon className="size-3.5 shrink-0" />
           Uploaded and queued.{" "}
           <Link className="underline" href={`/documents/${state.documentId}`}>
             View
@@ -219,14 +232,20 @@ function UploadRowView({ row }: { row: UploadRow }) {
         </p>
       )}
       {state.phase === "failed-on-record" && (
-        <p className="text-xs text-red-800">
+        <p className="flex items-center gap-1.5 text-xs text-red-800">
+          <ErrorIcon className="size-3.5 shrink-0" />
           {state.reason}{" "}
           <Link className="underline" href={`/documents/${state.documentId}`}>
             View
           </Link>
         </p>
       )}
-      {state.phase === "rejected" && <p className="text-xs text-red-800">{state.reason}</p>}
+      {state.phase === "rejected" && (
+        <p className="flex items-center gap-1.5 text-xs text-red-800">
+          <ErrorIcon className="size-3.5 shrink-0" />
+          {state.reason}
+        </p>
+      )}
     </li>
   );
 }

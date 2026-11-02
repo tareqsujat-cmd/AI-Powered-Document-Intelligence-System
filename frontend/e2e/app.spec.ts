@@ -193,17 +193,17 @@ test("a person can upload, follow, review, correct, and search invoices", async 
     await expect(page.getByRole("link", { name: `invoice-${run}.pdf` })).toBeVisible();
     await page.screenshot({ path: `${SHOTS}/7-search.png`, fullPage: true });
 
-    await page.getByRole("radio", { name: /Semantic/ }).check();
+    await page.locator("label", { hasText: "Semantic" }).click();
     await page.getByRole("searchbox").fill("professional advice fees");
     await page.getByRole("button", { name: "Search", exact: true }).click();
     await expect(page.getByText("semantic").first()).toBeVisible();
 
     await page.getByRole("searchbox").fill("zzzzqqqq xxyyzz");
-    await page.getByRole("radio", { name: /Keyword/ }).check();
+    await page.locator("label", { hasText: "Keyword" }).click();
     await page.getByRole("button", { name: "Search", exact: true }).click();
     await expect(page.getByText(/Nothing matched/)).toBeVisible();
 
-    await page.getByRole("radio", { name: /Keyword/ }).check();
+    await page.locator("label", { hasText: "Keyword" }).click();
     await page.getByRole("searchbox").fill(`E2E-${run}`);
     await page.getByRole("button", { name: "Search", exact: true }).click();
     await page.getByRole("link", { name: `invoice-${run}.pdf` }).click();

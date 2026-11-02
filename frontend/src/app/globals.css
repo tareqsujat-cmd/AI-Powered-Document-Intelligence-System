@@ -1,1 +1,22 @@
 @import "tailwindcss";
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  /* A faint wash behind the page, so that white cards lift off it. */
+  background-image: radial-gradient(
+    70rem 28rem at 50% -8rem,
+    rgb(224 231 255 / 0.55),
+    transparent
+  );
+  background-repeat: no-repeat;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

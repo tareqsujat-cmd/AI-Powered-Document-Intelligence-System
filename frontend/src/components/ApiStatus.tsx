@@ -44,7 +44,7 @@ export function ApiStatus() {
   return (
     <p
       role="status"
-      className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-medium"
+      className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-medium text-slate-700 shadow-xs ring-1 ring-inset ring-slate-200"
     >
       <span aria-hidden="true" className={`size-2 rounded-full ${dotClass}`} />
       {label}

@@ -4,7 +4,8 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { type FormEvent, useEffect, useOptimistic, useState, useTransition } from "react";
 import { search, type SearchHit, type SearchMode } from "@/lib/api";
-import { Button, Card, ErrorNote, INPUT_CLASS } from "./ui";
+import { SearchIcon } from "./icons";
+import { Button, Card, EmptyState, ErrorNote, INPUT_CLASS } from "./ui";
 
 const MODES: { value: SearchMode; label: string; hint: string }[] = [
   { value: "hybrid", label: "Hybrid", hint: "Both words and meaning" },
@@ -84,7 +85,7 @@ export function SearchView() {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-1">
-        <h1 className="text-xl font-semibold tracking-tight">Search</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Search</h1>
         <p className="text-sm text-slate-600">
           Find processed documents by invoice number, supplier, wording, or what they are about.
         </p>
@@ -92,23 +93,34 @@ export function SearchView() {
 
       <form role="search" onSubmit={submit} className="flex flex-col gap-3">
         <div className="flex gap-2">
-          <input
-            type="search"
-            aria-label="Search documents"
-            placeholder="For example, INV-2026-0042 or cloud hosting"
-            maxLength={500}
-            value={draft}
-            onChange={(event) => setDraft(event.target.value)}
-            className={`${INPUT_CLASS} min-w-0 flex-1`}
-          />
-          <Button type="submit" variant="primary">
+          <div className="relative min-w-0 flex-1">
+            <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-slate-400" />
+            <input
+              type="search"
+              aria-label="Search documents"
+              placeholder="For example, INV-2026-0042 or cloud hosting"
+              maxLength={500}
+              value={draft}
+              onChange={(event) => setDraft(event.target.value)}
+              className={`${INPUT_CLASS} w-full py-2.5 pl-10`}
+            />
+          </div>
+          <Button type="submit" variant="primary" className="px-5">
             Search
           </Button>
         </div>
-        <fieldset className="flex flex-wrap items-center gap-x-4 gap-y-1">
+        <fieldset className="flex w-fit max-w-full flex-wrap gap-1 rounded-xl bg-slate-200/60 p-1">
           <legend className="sr-only">Search method</legend>
           {MODES.map((option) => (
-            <label key={option.value} className="flex items-center gap-1.5 text-sm text-slate-700">
+            <label
+              key={option.value}
+              title={option.hint}
+              className={`flex cursor-pointer items-center rounded-lg px-3 py-1.5 text-sm font-medium transition-colors has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-indigo-600 ${
+                shownMode === option.value
+                  ? "bg-white text-indigo-700 shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
               <input
                 type="radio"
                 name="mode"
@@ -120,21 +132,23 @@ export function SearchView() {
                     go(draft.trim(), option.value);
                   })
                 }
-                className="accent-indigo-700"
+                className="sr-only"
               />
               {option.label}
-              <span className="hidden text-xs text-slate-500 sm:inline">{option.hint}</span>
             </label>
           ))}
         </fieldset>
+        <p className="-mt-1 text-xs text-slate-500">
+          {MODES.find((option) => option.value === shownMode)?.hint}
+        </p>
       </form>
 
       {error && <ErrorNote>{error}</ErrorNote>}
       {searching && <p className="text-sm text-slate-500">Searching…</p>}
       {!searching && hits && hits.length === 0 && (
-        <Card className="px-4 py-8 text-center text-sm text-slate-500">
+        <EmptyState icon={<SearchIcon className="size-6" />}>
           Nothing matched “{query}”.
-        </Card>
+        </EmptyState>
       )}
       {hits && hits.length > 0 && (
         <ul className="flex flex-col gap-2">
@@ -151,7 +165,7 @@ function SearchResult({ hit }: { hit: SearchHit }) {
   const page = hit.page_number ?? 1;
   return (
     <li>
-      <Card className="flex flex-col gap-1 px-4 py-3 text-sm">
+      <Card className="flex flex-col gap-1.5 px-4 py-3.5 text-sm transition-shadow hover:shadow-md hover:shadow-slate-900/5">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <Link
             href={`/documents/${hit.document_id}?page=${page}`}
