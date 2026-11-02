@@ -50,7 +50,7 @@ How it is scored (`eval/scoring.py`, tested by `eval/test_scoring.py`):
 
 ## What changed between the two runs
 
-Two runs are reported. **baseline** was the first full run. **final** is the run after fixing what the baseline exposed. Both used the same 50 documents, the same model, and a fresh database each time.
+Two runs are reported. **baseline** was the first full run. **final** is the run after fixing what the baseline exposed. Both used the same 50 documents, the same model, and a fresh database each time. The runs record commit `fbac896-dirty` because the fix was not yet committed. The backend code measured in the final run is the Phase 5 commit, `0f81b67`.
 
 1. **A system bug: invoice splitting.** In the baseline, `batch-4-invoices.pdf` gave three invoices instead of four. Its second invoice prints the number under an `INVOICE #` column heading, with the value on the line below, and the splitter only looked beside the label. So it treated that page as a continuation of the first invoice, and the second invoice was lost. The splitter now reads column headings, in text-layer output (tab-separated) and OCR output (space-separated), and has regression tests in `backend/tests/test_segmentation.py`.
 2. **A labeling bug: one wrong label.** In the PDF layouts the currency is printed only beside the total. `no-total.pdf` hides the total, so it prints no currency, but its label still said `USD`. The system's answer, null, was right. The generator now labels it null. The baseline was scored against the wrong label, which cost it one field.
