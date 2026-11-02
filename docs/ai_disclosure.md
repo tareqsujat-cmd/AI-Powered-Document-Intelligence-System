@@ -31,3 +31,10 @@ This project is built with **Claude Code** (model: Claude Opus 5.5), directed by
 - **Changed because of running it:** a guessed similarity cutoff was replaced with a measured one, and flagging an agreeing PDF and spreadsheet as duplicates was replaced with reporting them as verified, after seeing it live.
 - **Verified by running:** the full test suite in Docker, with real Postgres, Redis, Tesseract, and the embedding model, and a mocked LLM; 13 files through the running stack with the real LLM; and killing a real worker container mid-job. The subagent tried 109 deliberately broken variants of the API code, and the assistant 31 of the extraction code. Each survivor became a new test or removed code.
 - **Not verified:** throughput with many workers, behaviour against provider quotas at volume, chunked uploads through a real server, and real-world accuracy, which Phase 5 measures.
+
+### Phase 4: web interface
+
+- **Assistant generated:** the pages, components, API client, page preview route, and browser test. A subagent generated the component tests.
+- **Found by driving the app in a real browser and looking at screenshots:** Clear filters did nothing, the search method buttons lagged behind clicks, retried documents counted the wait as processing time, the first document after a restart took over 30 seconds, and exact-number searches buried the answer. All are fixed.
+- **Verified by running:** the whole flow in real Chrome against the running stack with the real LLM, at desktop and phone widths, plus the component tests.
+- **Not verified:** browsers other than Chrome, real drag and drop, and screen readers. A person should review the design.

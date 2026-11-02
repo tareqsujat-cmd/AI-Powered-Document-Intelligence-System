@@ -13,6 +13,7 @@ from app.extraction.normalize import normalize_key
 from app.search.embeddings import Embedder
 
 MAX_RESULTS = 100
+EXACT_NUMBER_SCORE = 1.0
 # Candidates fetched from each method, before grouping by document and merging.
 _CANDIDATES = 200
 # Below this cosine similarity, a passage has little to do with the query. Measured on invoice pages
@@ -104,7 +105,7 @@ def _field_hits(session: Session, query: str, filters: SearchFilters) -> list[Se
                 page_number=row.page_start,
                 snippet=details[:_FIELD_SNIPPET_CHARS],
                 # An exact invoice number is about as strong as a keyword match can be.
-                score=1.0 if exact_number else 0.5,
+                score=EXACT_NUMBER_SCORE if exact_number else 0.5,
                 matched_by=["keyword"],
             )
         )
@@ -191,6 +192,10 @@ def hybrid_search(
 ) -> list[SearchHit]:
     """Reciprocal rank fusion: ranks are comparable across methods, while raw scores are not."""
     keyword = keyword_search(session, query, filters, _CANDIDATES)
+    # Someone who types an exact invoice number wants that invoice. To the embedding model, every
+    # invoice looks alike, so adding its opinions would bury the answer under the whole archive.
+    if keyword and keyword[0].score == EXACT_NUMBER_SCORE:
+        return [hit for hit in keyword if hit.score == EXACT_NUMBER_SCORE][:limit]
     semantic = semantic_search(session, query, embedder, filters, _CANDIDATES)
 
     merged: dict[uuid.UUID, SearchHit] = {}

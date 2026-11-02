@@ -13,6 +13,7 @@ x-backend-common: &backend-common
     POSTGRES_PORT: "5432"
     REDIS_URL: redis://redis:6379/0
     STORAGE_DIR: /data/uploads
+    PRELOAD_EMBEDDING_MODEL: "true"
   volumes:
     - uploads:/data/uploads
 
@@ -131,6 +132,7 @@ services:
     environment:
       <<: *backend-env
       APP_ENV: test
+      PRELOAD_EMBEDDING_MODEL: "false"
       TEST_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
     depends_on:
       postgres:

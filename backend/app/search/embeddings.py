@@ -1,9 +1,13 @@
+import logging
+import threading
 from collections.abc import Iterator, Sequence
 from dataclasses import dataclass
 from functools import lru_cache
 from typing import Any, Protocol
 
 from app.core.config import Settings, get_settings
+
+logger = logging.getLogger(__name__)
 
 # all-MiniLM-L6-v2 reads about 256 tokens, which is roughly this many characters of invoice text.
 CHUNK_CHARS = 1000
@@ -26,13 +30,15 @@ class SentenceTransformerEmbedder:
         self.model_name = settings.embedding_model
         self._batch_size = settings.embedding_batch_size
         self._model: Any = None
+        self._load_lock = threading.Lock()
 
     def encode(self, texts: Sequence[str]) -> list[list[float]]:
-        if self._model is None:
-            # Imported here because it pulls in torch, which slows every process that imports it.
-            from sentence_transformers import SentenceTransformer
+        with self._load_lock:
+            if self._model is None:
+                # Imported here because it pulls in torch, which slows anything that imports it.
+                from sentence_transformers import SentenceTransformer
 
-            self._model = SentenceTransformer(self.model_name, device="cpu")
+                self._model = SentenceTransformer(self.model_name, device="cpu")
         vectors = self._model.encode(
             list(texts),
             batch_size=self._batch_size,
@@ -45,6 +51,25 @@ class SentenceTransformerEmbedder:
 @lru_cache
 def get_embedder() -> SentenceTransformerEmbedder:
     return SentenceTransformerEmbedder(get_settings())
+
+
+def preload_embedder_in_background() -> threading.Thread:
+    """Load the model before anyone needs it, so that the first search or document is not slow.
+
+    In the background, as the model takes tens of seconds to load, and a Celery worker process that
+    takes more than a few seconds to start is killed as having failed.
+    """
+
+    def load() -> None:
+        try:
+            get_embedder().encode(["preload"])
+        except Exception:
+            # Only a slower first request is lost. Using the model will report any real problem.
+            logger.exception("could not preload the embedding model")
+
+    thread = threading.Thread(target=load, name="preload-embedder", daemon=True)
+    thread.start()
+    return thread
 
 
 @dataclass(frozen=True, slots=True)

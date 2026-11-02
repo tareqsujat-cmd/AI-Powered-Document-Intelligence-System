@@ -63,3 +63,8 @@ def _configure_worker_logging(**_: Any) -> None:
 def _reset_inherited_db_connections(**_: Any) -> None:
     # Pooled connections must not be shared across fork. close=False leaves the parent's intact.
     get_engine().dispose(close=False)
+    if get_settings().preload_embedding_model:
+        # Imported here because the parent process must not load the model before it forks.
+        from app.search.embeddings import preload_embedder_in_background
+
+        preload_embedder_in_background()

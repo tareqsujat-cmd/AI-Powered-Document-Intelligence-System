@@ -25,3 +25,9 @@ Dockerfile
 *.md
 npm-debug.log*
 .DS_Store
+
+# End-to-end tests run against a running stack, not in the image
+e2e
+e2e-artifacts
+playwright.config.ts
+

@@ -14,10 +14,10 @@ Ingests invoices as PDF, JPG, PNG, TIFF, XLSX, XLS and CSV (PDFs up to about 100
 | 1 | Processing pipelines | Done |
 | 2 | LLM extraction and validation | Done |
 | 3 | REST API, background pipeline, search | Done |
-| 4 | Frontend features | Not started |
+| 4 | Web interface | Done |
 | 5 | Evaluation and final docs | Not started |
 
-Today the whole backend works through its REST API: upload, background processing, results, corrections, review, reprocessing, search, and metrics. The web UI is still only a landing page until Phase 4, so use the API docs at `/docs` in the meantime.
+The whole system works today, through the web interface or the REST API: upload, live progress, results beside the original page, corrections, review, reprocessing, search, and metrics. Accuracy on a labeled dataset is measured in Phase 5.
 
 ## Run with Docker
 
@@ -54,6 +54,8 @@ pytest backend/tests -q
 
 cd frontend && npm ci && npm test
 ```
+
+To drive the real app in a browser, with the whole stack running and an LLM key set, run `npm run e2e` in `frontend`. It uses your installed Google Chrome.
 
 ## Layout
 

@@ -43,5 +43,5 @@ disallow_untyped_decorators = false
 
 # PyMuPDF has partial annotations, so many of its calls count as untyped.
 [[tool.mypy.overrides]]
-module = ["app.processing.pdf", "app.processing.extract"]
+module = ["app.processing.pdf", "app.processing.extract", "app.processing.preview"]
 disallow_untyped_calls = false

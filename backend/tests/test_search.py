@@ -207,6 +207,14 @@ class TestHybridSearch:
         assert by_number[0].document_id == corpus["catering"].id
         assert by_words[0].document_id == corpus["catering"].id
 
+    def test_an_exact_invoice_number_returns_only_that_invoice(
+        self, db: Session, corpus: dict
+    ) -> None:
+        hits = hybrid_search(db, "inv 1001", FakeEmbedder(), SearchFilters(), 10)
+
+        assert [hit.document_id for hit in hits] == [corpus["bearings"].id]
+        assert hits[0].matched_by == ["keyword"]
+
     def test_a_match_by_both_methods_says_so_and_ranks_first(
         self, db: Session, corpus: dict
     ) -> None:

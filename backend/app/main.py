@@ -1,3 +1,6 @@
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,6 +15,7 @@ from app.api.security import (
 )
 from app.core.config import Settings, get_settings
 from app.core.logging import RequestContextMiddleware, configure_logging
+from app.search.embeddings import preload_embedder_in_background
 
 API_PREFIX = "/api/v1"
 
@@ -20,7 +24,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or get_settings()
     configure_logging(settings.log_level, json_logs=settings.log_json)
 
-    app = FastAPI(title="Document Intelligence API", version=__version__)
+    @asynccontextmanager
+    async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+        if settings.preload_embedding_model:
+            preload_embedder_in_background()
+        yield
+
+    app = FastAPI(title="Document Intelligence API", version=__version__, lifespan=lifespan)
     app.add_exception_handler(RequestValidationError, validation_error_response)
     # The last one added runs first. Errors are handled innermost, so that error responses get the
     # headers from every other middleware.

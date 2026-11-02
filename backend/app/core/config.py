@@ -60,6 +60,8 @@ class Settings(BaseSettings):
     prompts_dir: Path | None = None
 
     embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
+    # Off by default so that scripts and tests do not load a model they will not use.
+    preload_embedding_model: bool = False
     embedding_batch_size: int = Field(default=32, gt=0)
     max_embedding_chunks_per_document: int = Field(default=5000, gt=0)
 

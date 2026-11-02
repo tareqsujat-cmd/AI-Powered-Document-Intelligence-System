@@ -7,7 +7,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
 from fastapi import Path as PathParam
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from sqlalchemy import ColumnElement, func, select
 from sqlalchemy.orm import Session, defer, selectinload
 
@@ -52,6 +52,7 @@ from app.processing.file_validation import (
     sanitize_filename,
     validate_file,
 )
+from app.processing.preview import render_page_png
 
 logger = logging.getLogger(__name__)
 
@@ -65,6 +66,14 @@ _MAX_PAGE_NUMBER = 2**31 - 1
 _MAX_REPORTED_FILENAME = 255
 _INLINE_TYPES = frozenset({FileType.PDF, FileType.JPEG, FileType.PNG})
 _API_ACTOR = "api"
+
+
+def _stored_path(document: Document, settings: Settings) -> Path:
+    """The document's file, only if it is really inside the storage directory."""
+    path = Path(document.storage_path).resolve()
+    if not path.is_relative_to(settings.storage_dir.resolve()) or not path.is_file():
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "The file is no longer available.")
+    return path
 
 
 def _extension(filename: str) -> str:
@@ -367,6 +376,26 @@ def get_document_page(
     return PageOut.of(page)
 
 
+@router.get("/documents/{document_id}/pages/{page_number}/image", response_class=Response)
+def get_document_page_image(
+    document_id: uuid.UUID,
+    page_number: Annotated[int, PathParam(ge=1, le=_MAX_PAGE_NUMBER)],
+    session: SessionDep,
+    settings: SettingsDep,
+) -> Response:
+    """A page as a PNG for preview. Rendered here because browsers cannot show TIFF at all."""
+    document = get_document_or_404(session, document_id)
+    path = _stored_path(document, settings)
+    image = render_page_png(path, document.file_type, page_number)
+    if image is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "This page has no preview.")
+    return Response(
+        image,
+        media_type="image/png",
+        headers={"X-Content-Type-Options": "nosniff", "Cache-Control": "private, max-age=3600"},
+    )
+
+
 @router.get("/documents/{document_id}/history", response_model=list[HistoryOut])
 def get_document_history(document_id: uuid.UUID, session: SessionDep) -> list[HistoryOut]:
     get_document_or_404(session, document_id)
@@ -384,9 +413,7 @@ def get_document_file(
     document_id: uuid.UUID, session: SessionDep, settings: SettingsDep
 ) -> FileResponse:
     document = get_document_or_404(session, document_id)
-    path = Path(document.storage_path).resolve()
-    if not path.is_relative_to(settings.storage_dir.resolve()) or not path.is_file():
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "The file is no longer available.")
+    path = _stored_path(document, settings)
     return FileResponse(
         path,
         media_type=document.mime_type,

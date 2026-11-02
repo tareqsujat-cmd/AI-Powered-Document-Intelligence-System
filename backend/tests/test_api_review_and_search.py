@@ -225,6 +225,20 @@ class TestReprocessFixes:
 
         assert document.processing_started_at == started
 
+    def test_retrying_a_failed_document_does_not_count_the_wait_as_processing_time(
+        self, db: Session
+    ) -> None:
+        document = make_document(
+            db,
+            status=DocumentStatus.FAILED,
+            failure_reason="bad file",
+            processing_started_at=datetime(2020, 1, 1, tzinfo=UTC),
+        )
+
+        prepare_reprocess(db, document, resume=True)
+
+        assert document.processing_started_at is None
+
     def test_the_api_can_reprocess_a_failed_document_from_scratch(
         self, api: Api, db: Session
     ) -> None:

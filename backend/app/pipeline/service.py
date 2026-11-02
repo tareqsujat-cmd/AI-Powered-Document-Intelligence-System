@@ -99,6 +99,10 @@ def prepare_reprocess(
     )
     document.stage = ProcessingStage.UPLOAD
     document.processing_finished_at = None
+    # A retry of a failed document may come much later, and that wait is not processing time. A
+    # stalled document's clock keeps running, as losing its worker is part of how long it took.
+    if document.status is DocumentStatus.FAILED:
+        document.processing_started_at = None
     if resume:
         return
 

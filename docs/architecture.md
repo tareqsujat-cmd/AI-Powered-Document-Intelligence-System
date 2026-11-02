@@ -226,7 +226,27 @@ Interactive documentation is at `/docs` when the stack is running. All routes ar
 | Damaged PDF, password-protected PDF, empty CSV | Failed, each with its own plain reason, and retryable |
 | Executable named `.pdf` | Rejected at upload, nothing stored |
 
-The first semantic search after a restart took 10.8 s, as the model loads on first use, and later ones took about 0.04 s.
+The embedding model loads in the background at startup. After a restart, the first PDF took 3.1 s and the first CSV 0.5 s, down from 31 to 72 s before preloading, and the first semantic search took 2.5 s, down from 10.8 s. Later searches took about 0.04 s.
+
+### Web interface (built)
+
+Next.js with the App Router, TypeScript, and Tailwind. All data comes from the REST API in the browser.
+
+| Page | What a reviewer can do |
+|---|---|
+| Documents (`/`) | Drop in many files and watch each upload's progress. See live status, stage, and failure reasons. Filter by status, review flag, type, name, supplier, number, and date. Retry everything that failed |
+| Document (`/documents/{id}`) | See the original page beside the extracted values, with each value's confidence, source text, and a link to its page. Correct values inline, edit line items, mark issues reviewed, reprocess, and read the full history |
+| Search (`/search`) | Search by keyword, meaning, or both, and open a result at its page |
+
+| Design decision | Why | Trade-off accepted |
+|---|---|---|
+| Page previews are PNGs rendered by the API | Browsers cannot display TIFF, and an uploaded PDF cannot safely be embedded, so every format gets the same preview | One render per page viewed. Browsers can cache it for an hour |
+| One upload request per file, three at a time | Each file gets its own progress bar and its own outcome. One huge file does not hold up the rest | A very large batch reaches the upload rate limit, in which case the page waits and retries rather than losing files |
+| Filters and search terms live in the URL | They survive opening a document and pressing Back, and a filtered view can be shared | None worth noting |
+| Status by polling, every 3 s with work in progress and 15 s otherwise | Simpler and sturdier than a socket, at this scale | Status can be a few seconds old |
+| An exact invoice number in hybrid search returns only that invoice | Found by looking at real results: every invoice looks alike to the embedding model, so semantic matches buried the answer | A search for a number will not also show similar invoices |
+
+The whole flow is tested in real Chrome against the running stack with `npm run e2e`.
 
 ## Database schema (built)
 
@@ -401,5 +421,5 @@ erDiagram
 | LLM pacing shared through Redis | A quota covers every worker, so per-process pacing would exceed it as workers are added | Falls back to per-process pacing if Redis is down |
 | Rate limits fail open | A cache outage should not take the API down | No limits during a Redis outage |
 | A PDF and a spreadsheet that agree are verified, not duplicates | The assignment asks for PDF-vs-Excel cross-checking, so flagging its success as an error would be a false alarm on every good match | A truly double-entered invoice, once as a PDF and once as a spreadsheet, will not be flagged |
-| Embedding model loads on first use | Most requests never need it, and it takes hundreds of MB and about 10 seconds | The first semantic search after a restart is slow |
+| Embedding model preloads in the background at startup | Loading on first use made the first document take over 30 seconds, and it would distort measured processing times | Hundreds of MB of memory in the API and in each worker process, even if unused |
 | The API has no login | The assignment does not ask for accounts, and every port binds to loopback only, so `actor` on a correction is whatever the client sends | Real deployment would need authentication |
